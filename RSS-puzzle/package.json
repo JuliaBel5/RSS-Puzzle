@@ -1,0 +1,20 @@
+{
+  "name": "rss-puzzle",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{js,mjs,cjs,ts,mts}\"",
+    "lint:fix": "eslint \"src/**/*.{js,mjs,cjs,ts,mts}\" --fix"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-kit": "^10.18.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.4",
+    "prettier": "^3.2.5"
+  }
+}
