@@ -1,0 +1,19 @@
+@import './styles/game';
+@import './styles/login';
+@import './styles/modal';
+@import './styles/mixins';
+@import './styles/variables';
+
+body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('background2.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}

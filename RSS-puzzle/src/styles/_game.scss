@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+@import './mixins';
+@import './variables';
+
+a:hover {
+  background-color: $selectHover;
+}
+
+.saveButton0 {
+  @include pinkButton;
+}
+
+.saveButton1 {
+  @include blueButton;
+}
+
+.firstButton0 {
+  @include pinkButton;
+}
+
+.firstButton1 {
+  @include blueButton;
+}
+
+.secondButton0 {
+  @include invertedPinkButton;
+}
+
+.secondButton1 {
+  @include invertedBlueButton;
+}
+
+.disabled {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 50px;
+  border: 2px solid #888787;
+  text-align: center;
+  border-radius: 10px;
+  color: #666666;
+  font-weight: 400;
+  cursor: not-allowed;
+  background: linear-gradient(to left, #f7f3f3, #bfbbbb);
+  transition: background 0.5s ease;
+
+  &:hover {
+    background: linear-gradient(to right, #f7f3f3, #bfbbbb);
+    border: 2px solid #2f2e2e;
+  }
+}
+
+.timer0 {
+  font-family: 'Orbitron', sans-serif;
+  width: 115px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 400;
+  color: $darkPinkColor;
+}
+
+.timer1 {
+  font-family: 'Orbitron', sans-serif;
+  width: 115px;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 400;
+  color: $blueColor;
+}
+
+.scoresButton {
+  width: 80px;
+}
+
+.muteButton {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+  background: url('mute.png');
+  background-size: cover;
+  transition: all 0.3s ease;
+}
+
+.muteButton:hover {
+  transform: scale(1.1);
+}
+
+.muteButton.active {
+  background: url('unmute.png');
+  background-size: cover;
+}
+
+.mute0 {
+  background: url('mute.png');
+  background-size: cover;
+}
+
+.mute1 {
+  background: url('mute1.png');
+  background-size: cover;
+}
+
+.mute0.active {
+  background: url('unmute.png');
+  background-size: cover;
+}
+
+.mute1.active {
+  background: url('unmute1.png');
+  background-size: cover;
+}
+
+.themeButton0 {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+  background: url('blueFlower1.png');
+  background-size: cover;
+  transition: all 0.5s ease;
+}
+
+.themeButton0:hover {
+  transform: scale(1.1);
+}
+
+.themeButton1 {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  background: url('spring.png');
+  background-size: cover;
+}
+
+.themeButton1:hover {
+  //border: 2px solid rgb(133, 125, 221);
+  transform: scale(1.1);
+}
+
+.sizeSelector0,
+.pictureSelector0 {
+  @include pinkSelector;
+  width: 100px;
+  color: $modalMessagePink;
+}
+
+.sizeSelector1,
+.pictureSelector1 {
+  @include blueSelector;
+  width: 100px;
+  color: $blueColor;
+}
+
+.pictureSelector0,
+.pictureSelector1 {
+  width: 100px;
+}
+
+#sel1 select option:hover {
+  background-color: $selectHover;
+  border: 2px solid $selectBorder;
+  color: #fff;
+}
+
+select option:checked {
+  background-color: $selectHover;
+  border: 2px solid $selectBorder;
+  color: #fff;
+}
+
+::selection {
+  background: $selectHover;
+  color: #fff;
+}
+
+.option00 {
+  background-color: $pinkSelectOption0;
+}
+
+.option10 {
+  background-color: $pinkSelectOption1;
+}
+
+.option20 {
+  background-color: $pinkSelectOption2;
+}
+
+.option30 {
+  background-color: $pinkSelectOption3;
+}
+
+.option40 {
+  background-color: $pinkSelectOption4;
+}
+
+.option50 {
+  background-color: $pinkSelectOption5;
+}
+
+.option01 {
+  background-color: $blueSelectOption0;
+}
+
+.option11 {
+  background-color: $blueSelectOption1;
+}
+
+.option21 {
+  background-color: $blueSelectOption2;
+}
+
+.option31 {
+  background-color: $blueSelectOption3;
+}
+
+.option41 {
+  background-color: $blueSelectOption4;
+}
+
+.option51 {
+  background-color: $blueSelectOption5;
+}
