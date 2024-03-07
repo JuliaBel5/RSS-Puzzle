@@ -11,24 +11,27 @@
   width: 100px;
   height: 50px;
   border: 2px solid $redBook;
-  ;
   text-align: center;
   border-radius: 10px;
   color: $greenBook;
-  font-family: "Gochi Hand", cursive;
+  font-family: 'Gochi Hand', cursive;
   font-weight: 400;
   font-size: 24px;
   cursor: pointer;
-  background: linear-gradient(to right,
-      rgba(246, 240, 228, 0.216),
-      rgba(235, 175, 140, 0.164));
+  background: linear-gradient(
+    to right,
+    rgba(246, 240, 228, 0.216),
+    rgba(235, 175, 140, 0.164)
+  );
   box-shadow: 2px 2px 4px rgba(85, 84, 84, 0.4);
   transition: background 0.5s ease;
 
   &:hover {
-    background: linear-gradient(to left,
-        rgba(246, 240, 228, 0.216),
-        rgba(230, 184, 158, 0.164));
+    background: linear-gradient(
+      to left,
+      rgba(246, 240, 228, 0.216),
+      rgba(230, 184, 158, 0.164)
+    );
     border: 2px solid rgba(151, 6, 40, 0.9);
   }
 }
@@ -100,15 +103,19 @@
   color: $modalMessagePink;
   font-weight: 400;
   cursor: pointer;
-  background: linear-gradient(to right,
-      $modalButtonBackgroundStartColorPink,
-      $modalButtonBackgroundEndColorPink );
+  background: linear-gradient(
+    to right,
+    $modalButtonBackgroundStartColorPink,
+    $modalButtonBackgroundEndColorPink
+  );
   transition: background 0.5s ease;
 
   &:hover {
-    background: linear-gradient(to left,
-        $modalButtonBackgroundStartColorPink,
-        $modalButtonBackgroundEndColorPink );
+    background: linear-gradient(
+      to left,
+      $modalButtonBackgroundStartColorPink,
+      $modalButtonBackgroundEndColorPink
+    );
     border: 2px solid $pinkColor;
   }
 
@@ -131,15 +138,19 @@
   color: $modalMessagePink;
   font-weight: 400;
   cursor: pointer;
-  background: linear-gradient(to left,
-      $modalButtonBackgroundStartColorPink,
-      $modalButtonBackgroundEndColorPink );
+  background: linear-gradient(
+    to left,
+    $modalButtonBackgroundStartColorPink,
+    $modalButtonBackgroundEndColorPink
+  );
   transition: background 0.5s ease;
 
   &:hover {
-    background: linear-gradient(to right,
-        $modalButtonBackgroundStartColorPink,
-        $modalButtonBackgroundEndColorPink );
+    background: linear-gradient(
+      to right,
+      $modalButtonBackgroundStartColorPink,
+      $modalButtonBackgroundEndColorPink
+    );
     border: 2px solid rgb(212, 146, 161);
   }
 
