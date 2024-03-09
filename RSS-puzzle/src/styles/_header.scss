@@ -1,0 +1,41 @@
+.header {
+  position: absolute;
+  top: 15px;
+  left: 15%;
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+  height: 300px;
+}
+
+.select-container {
+  display: flex;
+  height: 50px;
+  width: 200px;
+}
+
+.icon-container {
+  display: flex;
+  height: 70px;
+  gap: 20px;
+}
+
+.background-tip {
+  cursor: pointer;
+}
+
+.audio-tip {
+  cursor: pointer;
+}
+
+.translation-tip {
+  cursor: pointer;
+}
+
+.logout {
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+  background-image: url('logout.png');
+  background-size: cover;
+}

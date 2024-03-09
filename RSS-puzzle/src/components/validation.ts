@@ -1,5 +1,7 @@
+import { showLoader } from '../utils/loader'
 import { Game } from './game'
 import { Login } from './login'
+import { state } from '../main'
 
 export class Validation {
   login: Login | undefined
@@ -31,7 +33,13 @@ export class Validation {
 
       if (this.login.gameArea) {
         this.login.gameArea.remove()
-        new Game()
+        showLoader()
+   
+        setTimeout(() => {
+          state.user = this.userAuthData.firstName
+          new Game(state.user)
+      }, 500)
+       
       }
     }
   }
