@@ -6,7 +6,7 @@
 .toast-container {
   position: fixed;
   top: 100px;
-  right: -250px;
+  right: -300px;
   transition: right 0.5s linear;
   z-index: 1;
   background-color: rgba(250, 207, 198, 0.8);
@@ -39,10 +39,6 @@
 
 .show {
   right: 100px;
-}
-
-.hide {
-  right: -300px;
 }
 
 .toast-confirm-button,

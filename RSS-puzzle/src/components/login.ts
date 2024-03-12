@@ -20,7 +20,7 @@ export class Login {
     const welcome = createElement(
       'p',
       'welcomeMessage',
-      'Welcome to CatPuzzle game!',
+      'Hi! Enter your name, please!',
     )
     const buttonContainer = createElement('form', 'inputContainer')
     const leftPanel = createElement('div', 'leftPanel')

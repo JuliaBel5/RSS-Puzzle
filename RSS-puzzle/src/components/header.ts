@@ -4,16 +4,16 @@ type HandlerFunction = () => void
 export class Header {
   element: HTMLElement
   logout: HTMLDivElement | undefined
-  header: HTMLElement | undefined
+  header: HTMLElement 
 
   constructor(element: HTMLElement) {
     this.element = element
-    this.init()
-  }
-  init(): void {
     this.header = createElement('header', 'header')
+  }
 
-    //first container for the selects
+  init(): void {
+    
+   //first container for the selects
     const selectContainer = createElement('div', 'select-container')
 
     // select for game levels
@@ -55,6 +55,16 @@ export class Header {
     this.element.appendChild(this.header)
   }
 
+  initStart() {
+    this.logout = createElement('div', 'logout')
+    const iconContainer = createElement('div', 'icon-container')
+    this.header.style.justifyContent = 'end'
+    iconContainer.append(this.logout)
+    this.header.append(iconContainer)
+    this.element.appendChild(this.header)
+  }
+
+  
   bindLogout = (handler: HandlerFunction): void => {
     if (this.logout) {
       this.logout.addEventListener('click', () => {

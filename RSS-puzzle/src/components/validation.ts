@@ -1,16 +1,20 @@
 import { showLoader } from '../utils/loader'
 import { Game } from './game'
+import { Start } from './start'
 import { Login } from './login'
 import { state } from '../main'
 
 export class Validation {
-  login: Login | undefined
+  login: Login
   private userAuthData = { firstName: '', lastName: '' }
+  start: Start
   constructor() {
     this.login = new Login()
+    this.start = new Start()
     this.login.bindFirstNameInput(this.handleErrors)
     this.login.bindLastNameInput(this.handleErrors)
     this.login.bindSubmit(this.handleSubmit)
+    this.start.bindStart(this.startScreen)
   }
 
   handleSubmit = (): void => {
@@ -34,14 +38,22 @@ export class Validation {
       if (this.login.gameArea) {
         this.login.gameArea.remove()
         showLoader()
-   
+
         setTimeout(() => {
           state.user = this.userAuthData.firstName
-          new Game(state.user)
-      }, 500)
-       
+          this.start.init()
+        }, 500)
       }
     }
+  }
+  startScreen = () => {
+    if (this.start.gameArea) {
+      this.start.gameArea.remove()
+      showLoader()
+    }
+    setTimeout(() => {
+      new Game(state.user)
+    }, 500)
   }
 
   handleErrors = (): void => {

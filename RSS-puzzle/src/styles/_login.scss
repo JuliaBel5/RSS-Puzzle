@@ -15,19 +15,39 @@
 
   flex-wrap: wrap;
   width: 800px;
+  height: 800px;
   border: 3px solid rgba(106, 24, 24, 0.418);
   border-radius: 10px;
   box-sizing: content-box;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(
-    to left,
-    rgba(242, 228, 231, 0.113),
-    rgba(178, 171, 172, 0.181)
-  );
+  background: linear-gradient(to left,
+      rgba(242, 228, 231, 0.113),
+      rgba(178, 171, 172, 0.181));
 }
 
 @media screen and (max-width: 900px) {
   .container {
+    width: 750px;
+  }
+}
+
+.startContainer {
+  display: flex;
+
+  flex-wrap: wrap;
+  width: 800px;
+  height: 600px;
+  border: 3px solid rgba(106, 24, 24, 0.418);
+  border-radius: 10px;
+  box-sizing: content-box;
+  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to left,
+      rgba(242, 228, 231, 0.113),
+      rgba(178, 171, 172, 0.181));
+}
+
+@media screen and (max-width: 900px) {
+  .startContainer {
     width: 750px;
   }
 }
@@ -53,11 +73,9 @@
   padding: 10px;
   box-sizing: content-box;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(
-    to left,
-    rgba(248, 235, 237, 0.4),
-    rgba(184, 166, 169, 0.4)
-  );
+  background: linear-gradient(to left,
+      rgba(248, 235, 237, 0.4),
+      rgba(184, 166, 169, 0.4));
   border-radius: 10px;
 }
 
@@ -65,6 +83,12 @@
   width: 58%;
   height: 800px;
   background: url('cat4ba.png');
+  background-size: cover;
+}
+
+.leftStartPanel {
+  width: 58%;
+  background: url('cat2.png');
   background-size: cover;
 }
 
@@ -76,6 +100,15 @@
 
   flex-direction: column;
   width: 42%;
+}
+
+.rightStartPanel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-direction: column;
+  width: 40%;
 }
 
 .input {
@@ -98,6 +131,11 @@
 
 .loginButton {
   @include startButton;
+}
+
+.startButton {
+  @include startButton;
+  width: 250px;
 }
 
 .error {

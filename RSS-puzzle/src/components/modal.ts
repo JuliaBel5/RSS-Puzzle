@@ -1,9 +1,19 @@
 import { createElement } from '../utils/createElement'
 import { Music } from '../utils/Music'
-//import { state } from '../main'
 const button = 'button.mp3'
+
 export class Modal {
-  constructor(section, model) {
+  overlay: HTMLElement | null
+  section: HTMLElement
+  modal: HTMLElement | null
+  isShown: boolean
+  audio: Music
+  modalContent: HTMLDivElement | undefined
+  title: HTMLDivElement | undefined
+  message: HTMLDivElement | undefined
+  modalButton: HTMLButtonElement | undefined
+
+  constructor(section: HTMLElement) {
     this.overlay = null
     this.section = section
     this.modal = null
@@ -11,20 +21,20 @@ export class Modal {
     this.audio = new Music()
   }
 
-  handleEnter = (event) => {
+  handleEnter = (event: KeyboardEvent) => {
     if (!event.code.endsWith('Enter')) return
 
     this.remove()
   }
 
-  create(title, message) {
+  create(title: string, message: string) {
     this.overlay = createElement('div', 'overlay')
     this.overlay.addEventListener('click', () => {})
     this.section.append(this.overlay)
     this.modal = createElement('div', `modal0`)
     this.modalContent = createElement('div', 'modal-content')
     this.title = createElement('div', 'title', title)
-    this.message = createElement('div', 'message', message)
+    this.message = createElement('div', 'rules', message)
     this.modalButton = createElement(
       'button',
       `modal-button0`,
@@ -40,7 +50,7 @@ export class Modal {
     this.section.append(this.modal)
   }
 
-  showModal(title, message) {
+  showModal(title: string, message: string) {
     this.isShown = true
     this.create(title, message)
     document.addEventListener('keydown', this.handleEnter)
@@ -50,7 +60,9 @@ export class Modal {
     if (this.modal) {
       this.isShown = false
       this.modal.remove()
-      this.overlay.remove()
+      if (this.overlay) {
+        this.overlay.remove()
+      }
 
       document.removeEventListener('keydown', this.handleEnter)
     }
