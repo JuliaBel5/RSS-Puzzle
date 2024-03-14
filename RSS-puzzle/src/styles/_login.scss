@@ -20,9 +20,11 @@
   border-radius: 10px;
   box-sizing: content-box;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(to left,
-      rgba(242, 228, 231, 0.113),
-      rgba(178, 171, 172, 0.181));
+  background: linear-gradient(
+    to left,
+    rgba(242, 228, 231, 0.113),
+    rgba(178, 171, 172, 0.181)
+  );
 }
 
 @media screen and (max-width: 900px) {
@@ -41,9 +43,11 @@
   border-radius: 10px;
   box-sizing: content-box;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(to left,
-      rgba(242, 228, 231, 0.113),
-      rgba(178, 171, 172, 0.181));
+  background: linear-gradient(
+    to left,
+    rgba(242, 228, 231, 0.113),
+    rgba(178, 171, 172, 0.181)
+  );
 }
 
 @media screen and (max-width: 900px) {
@@ -73,9 +77,11 @@
   padding: 10px;
   box-sizing: content-box;
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(to left,
-      rgba(248, 235, 237, 0.4),
-      rgba(184, 166, 169, 0.4));
+  background: linear-gradient(
+    to left,
+    rgba(248, 235, 237, 0.4),
+    rgba(184, 166, 169, 0.4)
+  );
   border-radius: 10px;
 }
 

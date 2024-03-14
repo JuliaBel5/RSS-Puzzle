@@ -30,10 +30,33 @@ a:hover {
 .picture {
   margin-top: 25px;
   position: relative;
-  width: 1000px;
-  height: 750px;
+  width: 750px;
+  height: 562.5px;
   // background: url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level1/winter_l.jpg?raw=true');
   background-size: cover;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.round-container {
+  position: relative;
+  display: flex;
+  margin-top: 30px;
+  height: 58.25px;
+  border: 2px solid $redBook;
+  box-shadow: 2px 2px 4px rgba(85, 84, 84, 0.4);
+}
+
+.line-container {
+  position: absolute;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.temp-el {
 }
 
 .image-piece {
@@ -41,14 +64,26 @@ a:hover {
   align-items: center;
   justify-content: center;
   margin: 0;
-  position: absolute;
+  position: relative;
   text-align: center;
   color: white;
   font-weight: 600;
   width: 100px;
   height: 75px;
   background: url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level1/winter_l.jpg?raw=true');
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 6px 20px rgba(0, 0, 0, 0.19);
   border: 1px solid #000;
+  transition: top 0.5s linear;
+  z-index: 2;
+}
+
+.image-piece:hover {
+  box-shadow:
+    0 5px 10px rgba(241, 193, 121, 0.2),
+    0 8px 24px rgba(244, 156, 41, 0.19);
+  border: 2px solid rgb(217, 213, 141);
 }
 
 .disabled {

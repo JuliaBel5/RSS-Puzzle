@@ -1,7 +1,7 @@
 import { createElement } from '../utils/createElement'
 import { Modal } from './modal'
 import { rules } from './rules'
-import { Header} from './header'
+import { Header } from './header'
 import { Toast } from './toast'
 import { state } from '../main'
 
@@ -12,16 +12,14 @@ export class Start {
   startButton: HTMLButtonElement | undefined
   user: string
   modal: Modal | undefined
-  header: Header  | undefined
+  header: Header | undefined
   toast = new Toast()
   lastName: string
 
-  
   constructor() {
-    
     this.user = state.user
     this.lastName = state.lastName
-    
+
     this.startButton = createElement(
       'button',
       'startButton',
@@ -67,15 +65,14 @@ export class Start {
     this.toast.bindConfirmButton(this.logout)
   }
 
-  
   bindStart = (handler: HandlerFunction): void => {
     if (this.startButton) {
       this.startButton.addEventListener('click', () => {
         handler()
         if (this.gameArea && this.header) {
-        this.gameArea.remove()
-      this.header.remove()
-      }
+          this.gameArea.remove()
+          this.header.remove()
+        }
       })
     }
   }
@@ -89,5 +86,5 @@ export class Start {
       this.gameArea.remove()
       this.header.remove()
     }
-    }
+  }
 }

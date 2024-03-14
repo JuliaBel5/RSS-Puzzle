@@ -4,7 +4,7 @@ type HandlerFunction = () => void
 export class Header {
   element: HTMLElement
   logout: HTMLDivElement | undefined
-  header: HTMLElement 
+  header: HTMLElement
 
   constructor(element: HTMLElement) {
     this.element = element
@@ -12,8 +12,7 @@ export class Header {
   }
 
   init(): void {
-    
-   //first container for the selects
+    //first container for the selects
     const selectContainer = createElement('div', 'select-container')
 
     // select for game levels
@@ -26,7 +25,7 @@ export class Header {
 
     // select for rounds
     const roundSelect = createElement('select', 'round-select')
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 40; i++) {
       const option = createElement('option', '', `${i}`, `round-${i}`)
       option.value = i.toString()
       roundSelect.appendChild(option)
@@ -64,7 +63,6 @@ export class Header {
     this.element.appendChild(this.header)
   }
 
-  
   bindLogout = (handler: HandlerFunction): void => {
     if (this.logout) {
       this.logout.addEventListener('click', () => {
