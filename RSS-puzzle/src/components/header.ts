@@ -83,8 +83,7 @@ export class Header {
       this.header.remove()
     }
   }
-  bindBackgroundTipOn = (
-    handler: HandlerFunction): void => {
+  bindBackgroundTipOn = (handler: HandlerFunction): void => {
     if (this.backgroundTip) {
       this.backgroundTip.addEventListener('click', () => {
         handler()

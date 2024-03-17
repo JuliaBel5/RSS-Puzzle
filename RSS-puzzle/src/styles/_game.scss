@@ -33,6 +33,8 @@ a:hover {
   font-size: 36px;
   color: rgb(54, 108, 10);
   text-align: center;
+  border: 2px solid $redBook;
+  border-radius: 7px;
 }
 
 .picture {
@@ -82,7 +84,7 @@ a:hover {
   font-weight: 600;
   width: 100px;
   height: 75px;
-  background: url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level1/winter_l.jpg?raw=true');
+  // background: url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level1/winter_l.jpg?raw=true');
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.2),
     0 6px 20px rgba(0, 0, 0, 0.19);
@@ -283,19 +285,15 @@ select option:checked {
 
 .continue {
   background-color: $redBook;
-  /* Light peach background */
   border: 2px solid $greenBook;
   border-radius: 7px;
   color: rgb(240, 237, 136);
+  height: 50px;
   text-align: center;
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-weight: 600;
-  padding: 15px 32px;
-  /* Padding around the text */
   text-align: center;
-  /* Center the text */
   text-decoration: none;
-  /* No underline */
   display: inline-block;
   font-size: 16px;
   margin: 10px 2px;
@@ -305,9 +303,7 @@ select option:checked {
 
 .continue:hover {
   background-color: rgb(236, 162, 101);
-  /* Darker peach background on hover */
   color: #e1edc4;
-  /* Light peach text on hover */
 }
 
 .disabled2 {
@@ -322,7 +318,7 @@ select option:checked {
   border-radius: 7px;
   color: #666666;
   font-family: Georgia, 'Times New Roman', Times, serif;
-  font-weight: 400;
+  font-weight: 600;
   font-size: 16px;
   display: inline-block;
   cursor: not-allowed;

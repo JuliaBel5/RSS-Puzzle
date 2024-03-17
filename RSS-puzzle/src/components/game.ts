@@ -35,7 +35,8 @@ export class Game {
   user: string
   roundContainer: HTMLDivElement | undefined
   roundArrays: HTMLElement[][] | undefined
-  
+  autoCompleteButton: HTMLButtonElement | undefined
+
   constructor(user: string) {
     this.user = user
     this.gameArea = createElement('div', 'gamearea')
@@ -62,6 +63,12 @@ export class Game {
       'Check',
       'check',
     )
+    this.autoCompleteButton = createElement(
+      'button',
+      'disabled2',
+      'Help me',
+      'check',
+    )
 
     this.roundContainer = createElement(
       'div',
@@ -72,7 +79,7 @@ export class Game {
 
     continueButton.addEventListener('click', () => {
       const target = document.getElementById(`${state.lineNumber}`)
-          if (target) {
+      if (target) {
         target.style.border = ''
         if (continueButton.textContent === 'Check') {
           this.verifyLine(target, continueButton)
@@ -86,9 +93,32 @@ export class Game {
         }
       }
     })
+
+    this.autoCompleteButton.addEventListener('click', () => {
+      const target = document.getElementById(`${state.lineNumber}`)
+      if (target) {
+        const children = target.children
+        const elementsWithIds = Array.from(children).map((child) => ({
+          element: child,
+          idNum: parseInt(child.id.split('-')[1], 10),
+        }))
+        elementsWithIds.sort((a, b) => a.idNum - b.idNum)
+
+        target.innerHTML = ''
+
+        elementsWithIds.forEach((item) => target.appendChild(item.element))
+        continueButton.classList.add('continue')
+        continueButton.classList.remove('disabled2')
+      }
+    })
     this.roundArrays = []
 
-    game.append(picture, this.roundContainer, continueButton)
+    game.append(
+      picture,
+      this.roundContainer,
+      this.autoCompleteButton,
+      continueButton,
+    )
     createImagePieces(
       picture,
       this.roundContainer,
@@ -102,12 +132,10 @@ export class Game {
       state.lineNumber,
       continueButton,
     )
-    let target = document.getElementById(state.lineNumber.toString())
     
-      this.header.bindTranslationTipOn(this.translationTipOn)
-      this.header.bindAudioTipOn(this.audioTipOn)
-      this.header.bindBackgroundTipOn(this.backgroundTipOn)
-    
+    this.header.bindTranslationTipOn(this.translationTipOn)
+    this.header.bindAudioTipOn(this.audioTipOn)
+    this.header.bindBackgroundTipOn(this.backgroundTipOn)
   }
   startRound = (
     roundArrays: HTMLElement[][],
@@ -116,8 +144,11 @@ export class Game {
     continueButton: HTMLElement,
   ) => {
     console.log(state.lineNumber, 'line number')
+    this.autoCompleteButton?.classList.remove('continue')
+    this.autoCompleteButton?.classList.add('disabled2')
     roundContainer.innerHTML = ''
     const target = document.getElementById(lineNumber.toString())
+
     const gameArrLength = roundArrays[lineNumber - 1].length
     const gameArrIndexes: number[] = Array.from(
       { length: gameArrLength },
@@ -126,6 +157,7 @@ export class Game {
     const shuffledGameIndArr = shuffleAndCheck(gameArrIndexes)
     shuffledGameIndArr.forEach((item) => {
       if (target) {
+        target.style.display = 'flex'
         const el = roundArrays[lineNumber - 1][item]
         //  el.style.background = `url('brown-background.jpg')`
         target.style.border = ''
@@ -144,7 +176,7 @@ export class Game {
               this.allChildrenHaveClass(target, 'temp-el')
             ) {
               target.innerHTML = ''
-              
+
               const elWidth = el.style.width
               const elHeight = el.style.height
               const tempEl = this.createTemp(elWidth, elHeight)
@@ -159,19 +191,24 @@ export class Game {
               el.style.top = `0px`
 
               if (
-                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
-                roundContainer.children.length === 0
+                (this.autoCompleteButton &&
+                  this.allChildrenHaveClass(roundContainer, 'temp-el')) ||
+                (this.autoCompleteButton &&
+                  roundContainer.children.length === 0)
               ) {
                 continueButton.classList.remove('disabled2')
                 continueButton.classList.add('continue')
+                this.autoCompleteButton.classList.remove('disabled2')
+                this.autoCompleteButton.classList.add('continue')
                 continueButton.textContent = 'Check'
-              } else {
+              } else if (this.autoCompleteButton) {
                 continueButton.classList.remove('continue')
                 continueButton.classList.add('disabled2')
+                this.autoCompleteButton.classList.remove('continue')
+                this.autoCompleteButton.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             } else {
-              
               const elWidth = el.style.width
               const elHeight = el.style.height
               const tempEl = this.createTemp(elWidth, elHeight)
@@ -183,15 +220,21 @@ export class Game {
               el.style.zIndex = `5`
               el.style.top = `0px`
               if (
-                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
-                roundContainer.children.length === 0
+                (this.autoCompleteButton &&
+                  this.allChildrenHaveClass(roundContainer, 'temp-el')) ||
+                (this.autoCompleteButton &&
+                  roundContainer.children.length === 0)
               ) {
                 continueButton.classList.remove('disabled2')
                 continueButton.classList.add('continue')
+                this.autoCompleteButton.classList.remove('disabled2')
+                this.autoCompleteButton.classList.add('continue')
                 continueButton.textContent = 'Check'
-              } else {
+              } else if (this.autoCompleteButton) {
                 continueButton.classList.remove('continue')
                 continueButton.classList.add('disabled2')
+                this.autoCompleteButton.classList.remove('continue')
+                this.autoCompleteButton.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             }
@@ -215,15 +258,21 @@ export class Game {
               el.style.zIndex = '5'
               el.style.top = `0px`
               if (
-                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
-                roundContainer.children.length === 0
+                (this.autoCompleteButton &&
+                  this.allChildrenHaveClass(roundContainer, 'temp-el')) ||
+                (this.autoCompleteButton &&
+                  roundContainer.children.length === 0)
               ) {
                 continueButton.classList.remove('disabled2')
                 continueButton.classList.add('continue')
+                this.autoCompleteButton.classList.remove('disabled2')
+                this.autoCompleteButton.classList.add('continue')
                 continueButton.textContent = 'Check'
-              } else {
+              } else if (this.autoCompleteButton) {
                 continueButton.classList.remove('continue')
                 continueButton.classList.add('disabled2')
+                this.autoCompleteButton.classList.remove('continue')
+                this.autoCompleteButton.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             } else {
@@ -239,15 +288,21 @@ export class Game {
               el.style.zIndex = '5'
               el.style.top = `0px`
               if (
-                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
-                roundContainer.children.length === 0
+                (this.autoCompleteButton &&
+                  this.allChildrenHaveClass(roundContainer, 'temp-el')) ||
+                (this.autoCompleteButton &&
+                  roundContainer.children.length === 0)
               ) {
                 continueButton.classList.remove('disabled2')
                 continueButton.classList.add('continue')
+                this.autoCompleteButton.classList.remove('disabled2')
+                this.autoCompleteButton.classList.add('continue')
                 continueButton.textContent = 'Check'
-              } else {
+              } else if (this.autoCompleteButton) {
                 continueButton.classList.remove('continue')
                 continueButton.classList.add('disabled2')
+                this.autoCompleteButton.classList.remove('continue')
+                this.autoCompleteButton.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             }
@@ -354,14 +409,13 @@ export class Game {
             )
           }
           const allTempEl = Array.from(document.querySelectorAll('.temp-el'))
-                   allTempEl.map((el) => {
-              if (el instanceof HTMLElement) {
-                if (el.style.width === draggableElement.style.width) {
-                   return
+          allTempEl.map((el) => {
+            if (el instanceof HTMLElement) {
+              if (el.style.width === draggableElement.style.width) {
+                return
+              }
             }
-          }
           })
-          
 
           //TODO добавить логику удаления временных элементов
         }
@@ -419,8 +473,6 @@ export class Game {
     round: number,
     level: number,
   ): void => {
-    
-    
     if (lineNumber <= 9) {
       state.lineNumber += 1
       button.classList.add('disabled2')
@@ -433,9 +485,9 @@ export class Game {
           button,
         )
         const target = document.getElementById(state.lineNumber.toString())
-           if(target) {
-      target.style.border = ""
-    }
+        if (target) {
+          target.style.border = ''
+        }
       }
     } else if (lineNumber > 9 && round < 41) {
       state.round = 1 + round
@@ -446,67 +498,75 @@ export class Game {
     } else {
       console.log('You won')
     }
-  
   }
   backgroundTipOn = (): void => {
     const target = document.getElementById(state.lineNumber.toString())
     if (target) {
       console.log('target available')
-    const childrenArray = Array.from(target.children)
+      const childrenArray = Array.from(target.children)
 
-    const allChildrenHavePictureBackground = childrenArray.every((child) => {
-      return (
-        child instanceof HTMLElement &&
-        child.style.backgroundImage === state.backgroundUrl
-      )
-    })
-    const allChildrenHaveBrownBackground = childrenArray.every((child) => {
-      return (
-        child instanceof HTMLElement &&
-        child.style.backgroundImage === `url("brown-background.jpg")`
-      )
-    })
+      const allChildrenHavePictureBackground = childrenArray.every((child) => {
+        return (
+          child instanceof HTMLElement &&
+          child.style.backgroundImage === state.backgroundUrl
+        )
+      })
+      const allChildrenHaveBrownBackground = childrenArray.every((child) => {
+        return (
+          child instanceof HTMLElement &&
+          child.style.backgroundImage === `url("brown-background.jpg")`
+        )
+      })
 
-    if (allChildrenHavePictureBackground) {
-      childrenArray.forEach((child) => {
-        if (child instanceof HTMLElement && !child.classList.contains('temp-el')) {
-          child.style.backgroundImage = `url("brown-background.jpg")`
-        }
-      })
-    } else if (allChildrenHaveBrownBackground) {
-      childrenArray.forEach((child) => {
-        if (child instanceof HTMLElement && !child.classList.contains('temp-el')) {
-          child.style.backgroundImage = state.backgroundUrl
-        }
-      })
-    } else {
-      childrenArray.forEach((child) => {
-        if (child instanceof HTMLElement && !child.classList.contains('temp-el')) {
-          child.style.backgroundImage = `url('brown-background.jpg')`
-        }
-      })
+      if (allChildrenHavePictureBackground) {
+        childrenArray.forEach((child) => {
+          if (
+            child instanceof HTMLElement &&
+            !child.classList.contains('temp-el')
+          ) {
+            child.style.backgroundImage = `url("brown-background.jpg")`
+          }
+        })
+      } else if (allChildrenHaveBrownBackground) {
+        childrenArray.forEach((child) => {
+          if (
+            child instanceof HTMLElement &&
+            !child.classList.contains('temp-el')
+          ) {
+            child.style.backgroundImage = state.backgroundUrl
+          }
+        })
+      } else {
+        childrenArray.forEach((child) => {
+          if (
+            child instanceof HTMLElement &&
+            !child.classList.contains('temp-el')
+          ) {
+            child.style.backgroundImage = `url('brown-background.jpg')`
+          }
+        })
+      }
     }
-  }
   }
   audioTipOn = (): void => {
     const target = document.getElementById(state.lineNumber.toString())
     if (target) {
-    const childrenArray = Array.from(target.children)
-    childrenArray.forEach((child) => {
-      //some logic to add later
-    })
+      const childrenArray = Array.from(target.children)
+      childrenArray.forEach((child) => {
+        //some logic to add later
+      })
     }
   }
 
   translationTipOn = (): void => {
     const target = document.getElementById(state.lineNumber.toString())
     if (target) {
-    const childrenArray = Array.from(target.children)
-    childrenArray.forEach((child) => {
-      if (child instanceof HTMLElement) {
-        //some logic to add later
-      }
-    })
+      const childrenArray = Array.from(target.children)
+      childrenArray.forEach((child) => {
+        if (child instanceof HTMLElement) {
+          //some logic to add later
+        }
+      })
     }
   }
 }

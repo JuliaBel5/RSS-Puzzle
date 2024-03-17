@@ -5,12 +5,12 @@ export function createImagePieces(
   roundContainer: HTMLElement,
   curLineNumber: number,
   roundArrays: HTMLElement[][],
-  list: { pieces: number; letters: string[] }[],
+  list: ImagePieceData[],
   backgroundImageUrl: string = 'brown-background.jpg',
 ) {
   let y = 0
-  const minWidth = '50px';
-  const maxWidth = '300px';
+//  const minWidth = '50px'
+//  const maxWidth = '300px'
   const pictureElement = document.querySelector('.picture')
   if (pictureElement instanceof HTMLElement) {
     const pictureWidth = pictureElement.offsetWidth
@@ -38,7 +38,7 @@ export function createImagePieces(
 
       for (let i = 0; i < item.letters.length; i++) {
         const piece = createElement('div', 'image-piece')
-      
+
         piece.style.width = `${widthRatio * item.letters[i].length}px`
         piece.style.height = `${pictureHeight / 10}px`
         piece.style.backgroundPosition = `-${x}px -${y}px`
@@ -55,6 +55,7 @@ export function createImagePieces(
 
         if (container) {
           container.append(lineContainer)
+          lineContainer.style.display = 'none'
         }
 
         piece.addEventListener('dragstart', function (e) {
@@ -167,7 +168,6 @@ interface ImagePieceData {
   pieces: number
   letters: string[]
 }
-
 
 /*function swapWidths(a: HTMLElement, b: HTMLElement) {
   if (a.parentNode === b.parentNode && a !== b) {

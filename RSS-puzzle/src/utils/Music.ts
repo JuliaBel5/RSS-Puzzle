@@ -4,7 +4,7 @@ export class Music {
   constructor() {
     this.audio = new Audio()
     this.audio.volume = 0.3
-    this.path = ""
+    this.path = ''
   }
 
   mute() {
