@@ -6,6 +6,14 @@ const catPuzzleUserData = localStorage.getItem('catPuzzleUser')
 export const state = {
   user: '',
   lastName: '',
+  level: 1,
+  round: 1,
+  lineNumber: 3,
+  roundsCount: 25,
+  backgroundUrl: `url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level6/6_07.jpg?raw=true')`,
+  translationTip: false,
+  audioTip: false,
+  backgroundTip: false,
 }
 
 if (catPuzzleUserData) {

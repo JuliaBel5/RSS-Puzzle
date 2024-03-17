@@ -1,10 +1,14 @@
 import { createElement } from '../utils/createElement'
 type HandlerFunction = () => void
+type HandlerFunction1 = (target: HTMLElement) => void
 
 export class Header {
   element: HTMLElement
   logout: HTMLDivElement | undefined
   header: HTMLElement
+  backgroundTip: HTMLElement | undefined
+  audioTip: HTMLElement | undefined
+  translationTip: HTMLElement | undefined
 
   constructor(element: HTMLElement) {
     this.element = element
@@ -36,9 +40,9 @@ export class Header {
     const iconContainer = createElement('div', 'icon-container')
     const icons: HTMLElement[] = []
     const tipIcons = [
-      { id: 'background-tip', label: 'Background Tip' },
-      { id: 'audio-tip', label: 'Audio Tip' },
-      { id: 'translation-tip', label: 'Translation Tip' },
+      { id: 'backgroundTip', label: 'Background Tip' },
+      { id: 'audioTip', label: 'Audio Tip' },
+      { id: 'translationTip', label: 'Translation Tip' },
     ]
     tipIcons.forEach((icon) => {
       const iconElement = createElement('img', icon.id, '', icon.id)
@@ -47,6 +51,9 @@ export class Header {
       iconContainer.append(iconElement)
     })
 
+    this.backgroundTip = icons[0]
+    this.audioTip = icons[1]
+    this.translationTip = icons[2]
     this.logout = createElement('div', 'logout')
 
     iconContainer.append(this.logout)
@@ -74,6 +81,29 @@ export class Header {
   remove() {
     if (this.header) {
       this.header.remove()
+    }
+  }
+  bindBackgroundTipOn = (
+    handler: HandlerFunction): void => {
+    if (this.backgroundTip) {
+      this.backgroundTip.addEventListener('click', () => {
+        handler()
+      })
+    }
+  }
+
+  bindAudioTipOn = (handler: HandlerFunction): void => {
+    if (this.backgroundTip) {
+      this.backgroundTip.addEventListener('click', () => {
+        handler()
+      })
+    }
+  }
+  bindTranslationTipOn = (handler: HandlerFunction): void => {
+    if (this.backgroundTip) {
+      this.backgroundTip.addEventListener('click', () => {
+        handler()
+      })
     }
   }
 }

@@ -6,9 +6,11 @@ export function createImagePieces(
   curLineNumber: number,
   roundArrays: HTMLElement[][],
   list: { pieces: number; letters: string[] }[],
-  backgroundImageUrl: string = 'https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level6/6_07.jpg?raw=true',
+  backgroundImageUrl: string = 'brown-background.jpg',
 ) {
   let y = 0
+  const minWidth = '50px';
+  const maxWidth = '300px';
   const pictureElement = document.querySelector('.picture')
   if (pictureElement instanceof HTMLElement) {
     const pictureWidth = pictureElement.offsetWidth
@@ -36,8 +38,7 @@ export function createImagePieces(
 
       for (let i = 0; i < item.letters.length; i++) {
         const piece = createElement('div', 'image-piece')
-        //   piece.style.left = `${x}px`
-        //   piece.style.top = `${y}px`
+      
         piece.style.width = `${widthRatio * item.letters[i].length}px`
         piece.style.height = `${pictureHeight / 10}px`
         piece.style.backgroundPosition = `-${x}px -${y}px`
@@ -46,7 +47,10 @@ export function createImagePieces(
         piece.textContent = item.letters[i]
         piece.style.backgroundImage = `url(${backgroundImageUrl})`
         piece.setAttribute('data-line', lineNumber.toString())
-
+        piece.setAttribute(
+          'background-position',
+          piece.style.backgroundPosition,
+        )
         lineContainer.append(piece)
 
         if (container) {
@@ -56,14 +60,9 @@ export function createImagePieces(
         piece.addEventListener('dragstart', function (e) {
           if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
             e.dataTransfer.setData('text', e.target.id)
-            e.target.dataset.initialX = e.target.style.left
-            e.target.dataset.initialY = e.target.style.top
-            e.target.dataset.initialBgPos = e.target.style.backgroundPosition
-            e.target.dataset.initialWidth = e.target.style.width
-            this.dataset.initialBgPosX = this.style.backgroundPositionX
-            this.dataset.initialBgPosY = this.style.backgroundPositionY
           }
         })
+
         lineContainer.addEventListener('drop', (e) => {
           e.preventDefault()
           if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
@@ -78,8 +77,8 @@ export function createImagePieces(
                 dropzone.classList.contains('line-container') &&
                 curLineNumber === Number(lineDataDrag)
               ) {
-                console.log('Julia')
                 dropzone.append(draggableElement)
+                verifyChildrenLength()
               }
             }
           }
@@ -111,38 +110,23 @@ export function createImagePieces(
             const draggableElement = document.getElementById(id)
             const dropzone = e.target
 
-            if (
-              draggableElement &&
-              dropzone &&
-              draggableElement.dataset.initialWidth
-            ) {
-              const direction =
-                draggableElement.compareDocumentPosition(dropzone) &
-                Node.DOCUMENT_POSITION_FOLLOWING
-                  ? 1
-                  : -1
-              const lineDataDropzone = dropzone.getAttribute('data-line')
-              const lineDataDraggable =
-                draggableElement.getAttribute('data-line')
-
-              if (
-                (draggableElement.parentElement === dropzone.parentElement &&
-                  lineDataDropzone === lineDataDraggable) ||
-                ((roundContainer.contains(dropzone) ||
-                  roundContainer.contains(draggableElement)) &&
-                  lineDataDropzone === lineDataDraggable)
-              ) {
-                if (direction < 0 && dropzone.parentElement) {
-                  console.log('dropzone before draggable') // widthDelta отриц
-                  dropzone.parentElement.insertBefore(
+            if (draggableElement && dropzone) {
+              const dropzoneRect = dropzone.getBoundingClientRect()
+              const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
+              const draggableElementRect =
+                draggableElement.getBoundingClientRect()
+              const draggableElementCenterY =
+                draggableElementRect.top + draggableElementRect.height / 2
+              if (dropzone.parentNode) {
+                if (draggableElementCenterY < dropzoneCenterY) {
+                  dropzone.parentNode.insertBefore(draggableElement, dropzone)
+                  verifyChildrenLength()
+                } else {
+                  dropzone.parentNode.insertBefore(
                     draggableElement,
-                    dropzone,
+                    dropzone.nextSibling,
                   )
-                } else if (direction > 0 && dropzone.parentElement) {
-                  dropzone.parentElement.insertBefore(
-                    draggableElement,
-                    dropzone.nextElementSibling,
-                  )
+                  verifyChildrenLength()
                 }
               }
             }
@@ -150,12 +134,21 @@ export function createImagePieces(
         })
         roundContainer.addEventListener('dragover', (e) => {
           e.preventDefault()
+          if (e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move'
+          }
         })
         lineContainer.addEventListener('dragover', (e) => {
           e.preventDefault()
+          if (e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move'
+          }
         })
         piece.addEventListener('dragover', (e) => {
           e.preventDefault()
+          if (e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move'
+          }
         })
 
         x += widthRatio * item.letters[i].length
@@ -174,38 +167,16 @@ interface ImagePieceData {
   pieces: number
   letters: string[]
 }
-const list = [5, 6, 7, 4, 8, 5, 6, 7, 4, 9]
 
-const imagePiecesData: ImagePieceData[] = [
-  {
-    pieces: 3,
-    letters: 'The students agree they have too much homework'.split(''),
-  },
-  { pieces: 2, letters: 'They arrived at school at 7 a.m'.split('') },
-  { pieces: 4, letters: 'Is your birthday in August?'.split('') },
-  { pieces: 5, letters: 'There is a small boat on the lake'.split('') },
-  { pieces: 6, letters: 'I ate eggs for breakfast'.split('') },
-  { pieces: 7, letters: 'I brought my camera on my vacation'.split('') },
-  {
-    pieces: 8,
-    letters: 'The capital of the United States is Washington, D.C'.split(''),
-  },
-  {
-    pieces: 9,
-    letters: 'Did you catch the ball during the baseball game?'.split(''),
-  },
-  { pieces: 10, letters: 'People feed ducks at the lake'.split('') },
-  { pieces: 10, letters: 'The woman enjoys riding her bicycle'.split('') },
-]
 
-function swapWidths(a: HTMLElement, b: HTMLElement) {
+/*function swapWidths(a: HTMLElement, b: HTMLElement) {
   if (a.parentNode === b.parentNode && a !== b) {
     const tempWidth = a.style.width
     a.style.width = b.style.width
     b.style.width = tempWidth
   }
 }
-/*function findNextRenderedElement(currentElement: HTMLElement, roundArrays: HTMLElement[][], id: number): HTMLElement {
+function findNextRenderedElement(currentElement: HTMLElement, roundArrays: HTMLElement[][], id: number): HTMLElement {
   const elements = roundArrays[id-1];
   console.log(elements);
   let nextElement;
@@ -231,3 +202,32 @@ function swapWidths(a: HTMLElement, b: HTMLElement) {
 
   return nextElement;
  }*/
+
+export function verifyChildrenLength() {
+  const button = document.getElementById('check')
+  const roundContainer = document.getElementById('round-container')
+  if (roundContainer && button) {
+    if (
+      allChildrenHaveClass(roundContainer, 'temp-el') ||
+      roundContainer.children.length === 0
+    ) {
+      button.classList.remove('disabled2')
+      button.classList.add('continue')
+    } else {
+      button.classList.remove('continue')
+      button.classList.add('disabled2')
+    }
+  }
+}
+
+export function allChildrenHaveClass(
+  container: HTMLElement,
+  className: string,
+): boolean {
+  for (let i = 0; i < container.children.length; i++) {
+    if (!container.children[i].classList.contains(className)) {
+      return false
+    }
+  }
+  return true
+}

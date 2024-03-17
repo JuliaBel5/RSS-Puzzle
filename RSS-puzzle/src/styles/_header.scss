@@ -1,11 +1,13 @@
 .header {
   position: absolute;
   top: 15px;
-  left: 15%;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: space-between;
-  width: 70%;
-  height: 200px;
+  max-width: 1000px;
+  height: 70px;
+  background: rgba(247, 236, 218, 0.6);
 }
 
 .select-container {
@@ -20,15 +22,15 @@
   gap: 20px;
 }
 
-.background-tip {
+.backgroundTip {
   cursor: pointer;
 }
 
-.audio-tip {
+.audioTip {
   cursor: pointer;
 }
 
-.translation-tip {
+.translationTip {
   cursor: pointer;
 }
 

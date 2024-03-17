@@ -5,6 +5,7 @@ import { Toast } from './toast'
 import { showLoader } from '../utils/loader'
 import { createImagePieces } from '../utils/createPieces'
 import { shuffleAndCheck } from '../utils/shuffle'
+import { state } from '../main'
 
 const array: { pieces: number; letters: string[] }[] = [
   {
@@ -32,6 +33,9 @@ export class Game {
   toast = new Toast()
   header: Header
   user: string
+  roundContainer: HTMLDivElement | undefined
+  roundArrays: HTMLElement[][] | undefined
+  
   constructor(user: string) {
     this.user = user
     this.gameArea = createElement('div', 'gamearea')
@@ -46,25 +50,73 @@ export class Game {
   }
 
   init(): void {
-    const game = createElement('div', 'game', 'Welcome to the game')
+    const game = createElement('div', 'game', '')
     if (this.gameArea) {
       this.gameArea.append(game)
     }
 
     const picture = createElement('div', 'picture', '', 'image')
-    const roundContainer = createElement(
+    const continueButton = createElement(
+      'button',
+      'disabled2',
+      'Check',
+      'check',
+    )
+
+    this.roundContainer = createElement(
       'div',
       'round-container',
       '',
       'round-container',
     )
-    roundContainer.setAttribute('draggable', 'true')
-    let lineNumber = 8
-    let roundArrays: HTMLElement[][] = []
 
-    game.append(picture)
-    createImagePieces(picture, roundContainer, lineNumber, roundArrays, array)
+    continueButton.addEventListener('click', () => {
+      const target = document.getElementById(`${state.lineNumber}`)
+          if (target) {
+        target.style.border = ''
+        if (continueButton.textContent === 'Check') {
+          this.verifyLine(target, continueButton)
+        } else if (continueButton.textContent === 'Continue') {
+          this.continue(
+            continueButton,
+            state.lineNumber,
+            state.round,
+            state.level,
+          )
+        }
+      }
+    })
+    this.roundArrays = []
 
+    game.append(picture, this.roundContainer, continueButton)
+    createImagePieces(
+      picture,
+      this.roundContainer,
+      state.lineNumber,
+      this.roundArrays,
+      array,
+    )
+    this.startRound(
+      this.roundArrays,
+      this.roundContainer,
+      state.lineNumber,
+      continueButton,
+    )
+    let target = document.getElementById(state.lineNumber.toString())
+    
+      this.header.bindTranslationTipOn(this.translationTipOn)
+      this.header.bindAudioTipOn(this.audioTipOn)
+      this.header.bindBackgroundTipOn(this.backgroundTipOn)
+    
+  }
+  startRound = (
+    roundArrays: HTMLElement[][],
+    roundContainer: HTMLElement,
+    lineNumber: number,
+    continueButton: HTMLElement,
+  ) => {
+    console.log(state.lineNumber, 'line number')
+    roundContainer.innerHTML = ''
     const target = document.getElementById(lineNumber.toString())
     const gameArrLength = roundArrays[lineNumber - 1].length
     const gameArrIndexes: number[] = Array.from(
@@ -75,11 +127,11 @@ export class Game {
     shuffledGameIndArr.forEach((item) => {
       if (target) {
         const el = roundArrays[lineNumber - 1][item]
-        el.style.background = `url('brown-background.jpg')`
-        const tempEl = createElement('div', 'temp-el')
+        //  el.style.background = `url('brown-background.jpg')`
+        target.style.border = ''
         const elWidth = el.style.width
-        tempEl.style.width = elWidth
-        tempEl.style.height = el.style.height
+        const elHeight = el.style.height
+        const tempEl = this.createTemp(elWidth, elHeight)
         target.append(tempEl)
         target.insertBefore(tempEl, el)
         roundContainer.append(el)
@@ -89,83 +141,121 @@ export class Game {
             //если el в строке раунда
             if (
               target.children.length === 0 || //если у строки картинки нет чайлдов,
-              allChildrenHaveClass(target, 'temp-el')
+              this.allChildrenHaveClass(target, 'temp-el')
             ) {
               target.innerHTML = ''
-              console.log('пустая строка на картинке')
-
-              const tempEl = createElement('div', 'temp-el')
+              
               const elWidth = el.style.width
-              tempEl.style.width = elWidth
-              tempEl.style.height = el.style.height
+              const elHeight = el.style.height
+              const tempEl = this.createTemp(elWidth, elHeight)
               roundContainer.append(tempEl)
               roundContainer.insertBefore(tempEl, el)
+
               el.style.top = `${parseInt(el.style.height) * (10 - lineNumber + 1)}px`
               target.append(el) // переходит на картинку
-              let picturePosition = picture.getBoundingClientRect()
-              let position = el.getBoundingClientRect()
-              let newPosition = position.top - picturePosition.top
-              console.log(newPosition / 2)
 
+              el.getBoundingClientRect()
               el.style.zIndex = '5'
               el.style.top = `0px`
+
+              if (
+                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
+                roundContainer.children.length === 0
+              ) {
+                continueButton.classList.remove('disabled2')
+                continueButton.classList.add('continue')
+                continueButton.textContent = 'Check'
+              } else {
+                continueButton.classList.remove('continue')
+                continueButton.classList.add('disabled2')
+                continueButton.textContent = 'Check'
+              }
             } else {
-              console.log('непустая строка на картинке')
-              const tempEl = createElement('div', 'temp-el')
+              
               const elWidth = el.style.width
-              tempEl.style.width = elWidth
-              tempEl.style.height = el.style.height
+              const elHeight = el.style.height
+              const tempEl = this.createTemp(elWidth, elHeight)
               roundContainer.append(tempEl)
               roundContainer.insertBefore(tempEl, el)
               el.style.top = `${parseInt(el.style.height) * (10 - lineNumber + 1)}px`
-              insertElBeforeTempEl(target, elWidth, el)
-              let position = el.getBoundingClientRect()
-              let newPosition = position.top
+              this.insertElBeforeTempEl(target, elWidth, el)
+              el.getBoundingClientRect()
               el.style.zIndex = `5`
               el.style.top = `0px`
+              if (
+                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
+                roundContainer.children.length === 0
+              ) {
+                continueButton.classList.remove('disabled2')
+                continueButton.classList.add('continue')
+                continueButton.textContent = 'Check'
+              } else {
+                continueButton.classList.remove('continue')
+                continueButton.classList.add('disabled2')
+                continueButton.textContent = 'Check'
+              }
             }
           } else {
             //если el вверху
             if (
               roundContainer.children.length === 0 || // если строка заполнена только временными элементами
-              allChildrenHaveClass(roundContainer, 'temp-el')
+              this.allChildrenHaveClass(roundContainer, 'temp-el')
             ) {
               roundContainer.innerHTML = ''
-              const tempEl = createElement('div', 'temp-el')
+
               const elWidth = el.style.width
-              tempEl.style.width = elWidth
-              tempEl.style.height = el.style.height
+              const elHeight = el.style.height
+              const tempEl = this.createTemp(elWidth, elHeight)
               target.append(tempEl)
               target.insertBefore(tempEl, el)
 
               roundContainer.append(el)
               el.style.top = `-${parseInt(el.style.height) * (10 - lineNumber + 1)}px`
-              let position = el.getBoundingClientRect()
-              let newPosition = position.top
+              el.getBoundingClientRect()
               el.style.zIndex = '5'
               el.style.top = `0px`
+              if (
+                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
+                roundContainer.children.length === 0
+              ) {
+                continueButton.classList.remove('disabled2')
+                continueButton.classList.add('continue')
+                continueButton.textContent = 'Check'
+              } else {
+                continueButton.classList.remove('continue')
+                continueButton.classList.add('disabled2')
+                continueButton.textContent = 'Check'
+              }
             } else {
               const elWidth = el.style.width
-              const tempEl = createElement('div', 'temp-el')
-              tempEl.style.width = elWidth
-              tempEl.style.height = el.style.height
+              const elHeight = el.style.height
+              const tempEl = this.createTemp(elWidth, elHeight)
               target.append(tempEl)
               target.insertBefore(tempEl, el)
 
-              insertElBeforeTempEl(roundContainer, elWidth, el)
+              this.insertElBeforeTempEl(roundContainer, elWidth, el)
               el.style.top = `-${parseInt(el.style.height) * (10 - lineNumber + 1)}px`
-              let position = el.getBoundingClientRect()
-              let newPosition = position.top
+              el.getBoundingClientRect()
               el.style.zIndex = '5'
               el.style.top = `0px`
+              if (
+                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
+                roundContainer.children.length === 0
+              ) {
+                continueButton.classList.remove('disabled2')
+                continueButton.classList.add('continue')
+                continueButton.textContent = 'Check'
+              } else {
+                continueButton.classList.remove('continue')
+                continueButton.classList.add('disabled2')
+                continueButton.textContent = 'Check'
+              }
             }
           }
         })
         el.style.zIndex = '2'
       }
     })
-
-    game.append(roundContainer)
   }
 
   confirm = () => {
@@ -185,51 +275,238 @@ export class Game {
       new Validation()
     }, 500)
   }
-}
 
-function insertElBeforeTempEl(
-  container: HTMLElement,
-  elWidth: string,
-  el: HTMLElement,
-) {
-  for (let i = 0; i < container.children.length; i++) {
-    const child = container.children[i]
-    if (child instanceof HTMLElement) {
-      if (
-        child.classList.contains('temp-el')
-        // &&        child.style.width === elWidth
-      ) {
-        container.insertBefore(el, child)
+  allChildrenHaveClass(container: HTMLElement, className: string): boolean {
+    for (let i = 0; i < container.children.length; i++) {
+      if (!container.children[i].classList.contains(className)) {
+        return false
+      }
+    }
+    return true
+  }
 
-        const tempElWidth = child.style.width
-        container.removeChild(child)
-        for (let i = 0; i < container.children.length; i++) {
-          const child = container.children[i]
-          if (child instanceof HTMLElement) {
-            if (
-              child.classList.contains('temp-el') &&
-              child.style.width === elWidth
-            ) {
-              child.style.width = tempElWidth
+  insertElBeforeTempEl(
+    container: HTMLElement,
+    elWidth: string,
+    el: HTMLElement,
+  ) {
+    for (let i = 0; i < container.children.length; i++) {
+      const child = container.children[i]
+      if (child instanceof HTMLElement) {
+        if (
+          child.classList.contains('temp-el')
+          // &&        child.style.width === elWidth
+        ) {
+          container.insertBefore(el, child)
+
+          const tempElWidth = child.style.width
+          container.removeChild(child)
+          for (let i = 0; i < container.children.length; i++) {
+            const child = container.children[i]
+            if (child instanceof HTMLElement) {
+              if (
+                child.classList.contains('temp-el') &&
+                child.style.width === elWidth
+              ) {
+                child.style.width = tempElWidth
+              }
             }
           }
+          break
+        } else {
+          container.append(el)
         }
-        break
-      } else {
-        container.append(el)
       }
     }
   }
-}
+  createTemp(elWidth: string, elHeight: string): HTMLElement {
+    const tempEl = createElement('div', 'temp-el')
+    tempEl.style.width = elWidth
+    tempEl.style.height = elHeight
+    tempEl.addEventListener('dragstart', function (e) {
+      if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
+        e.dataTransfer.setData('text', e.target.id)
+      }
+    })
+    tempEl.addEventListener('drop', (e) => {
+      e.preventDefault()
+      if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
+        const id = e.dataTransfer.getData('text')
+        const draggableElement = document.getElementById(id)
+        const dropzone = e.target
 
-function allChildrenHaveClass(
-  container: HTMLElement,
-  className: string,
-): boolean {
-  for (let i = 0; i < container.children.length; i++) {
-    if (!container.children[i].classList.contains(className)) {
-      return false
+        if (draggableElement && dropzone) {
+          const dropzoneRect = dropzone.getBoundingClientRect()
+          const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
+          const draggableElementRect = draggableElement.getBoundingClientRect()
+          const draggableElementCenterY =
+            draggableElementRect.top + draggableElementRect.height / 2
+
+          if (
+            dropzone.parentNode &&
+            draggableElementCenterY < dropzoneCenterY
+          ) {
+            dropzone.parentNode.insertBefore(draggableElement, dropzone)
+          } else if (dropzone.parentNode) {
+            dropzone.parentNode.insertBefore(
+              draggableElement,
+              dropzone.nextSibling,
+            )
+          }
+          const allTempEl = Array.from(document.querySelectorAll('.temp-el'))
+                   allTempEl.map((el) => {
+              if (el instanceof HTMLElement) {
+                if (el.style.width === draggableElement.style.width) {
+                   return
+            }
+          }
+          })
+          
+
+          //TODO добавить логику удаления временных элементов
+        }
+      }
+    })
+    tempEl.addEventListener('dragover', (e) => {
+      e.preventDefault()
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'move'
+      }
+    })
+    return tempEl
+  }
+  verifyLine(target: HTMLElement, button: HTMLElement): void {
+    const childrenArray = Array.from(target.children)
+    const idsAfterDash = childrenArray.map((el) => {
+      const id = el.id
+      const parts = id.split('-')
+      return parseInt(parts[1], 10)
+    })
+
+    let isOrderCorrect = true
+    for (let i = 0; i < idsAfterDash.length - 1; i++) {
+      if (idsAfterDash[i] > idsAfterDash[i + 1]) {
+        isOrderCorrect = false
+        button.textContent = 'Check'
+        button.classList.add('disabled2')
+        target.style.border = '2px solid red'
+        break
+        //TODO подсветить ошибки
+      }
+    }
+
+    if (isOrderCorrect) {
+      button.textContent = 'Continue'
+      button.classList.add('continue')
+      button.classList.remove('disabled2')
+      target.style.border = '2px solid green'
+      childrenArray.forEach((child) => {
+        if (child instanceof HTMLElement) {
+          child.style.backgroundImage = state.backgroundUrl
+          const backgroundPosition = child.getAttribute('background-position')
+          if (backgroundPosition !== null) {
+            child.style.background = state.backgroundUrl
+            child.style.backgroundPosition = backgroundPosition
+          }
+        }
+      })
+      //TODO подключить селекты
     }
   }
-  return true
+  continue = (
+    button: HTMLElement,
+    lineNumber: number,
+    round: number,
+    level: number,
+  ): void => {
+    
+    
+    if (lineNumber <= 9) {
+      state.lineNumber += 1
+      button.classList.add('disabled2')
+      button.textContent = 'Check'
+      if (this.roundArrays && this.roundContainer) {
+        this.startRound(
+          this.roundArrays,
+          this.roundContainer,
+          state.lineNumber,
+          button,
+        )
+        const target = document.getElementById(state.lineNumber.toString())
+           if(target) {
+      target.style.border = ""
+    }
+      }
+    } else if (lineNumber > 9 && round < 41) {
+      state.round = 1 + round
+      button.classList.add('disabled2')
+    } else if (round === 41 && level <= 5) {
+      state.level = level + 1
+      button.classList.add('disabled2')
+    } else {
+      console.log('You won')
+    }
+  
+  }
+  backgroundTipOn = (): void => {
+    const target = document.getElementById(state.lineNumber.toString())
+    if (target) {
+      console.log('target available')
+    const childrenArray = Array.from(target.children)
+
+    const allChildrenHavePictureBackground = childrenArray.every((child) => {
+      return (
+        child instanceof HTMLElement &&
+        child.style.backgroundImage === state.backgroundUrl
+      )
+    })
+    const allChildrenHaveBrownBackground = childrenArray.every((child) => {
+      return (
+        child instanceof HTMLElement &&
+        child.style.backgroundImage === `url("brown-background.jpg")`
+      )
+    })
+
+    if (allChildrenHavePictureBackground) {
+      childrenArray.forEach((child) => {
+        if (child instanceof HTMLElement && !child.classList.contains('temp-el')) {
+          child.style.backgroundImage = `url("brown-background.jpg")`
+        }
+      })
+    } else if (allChildrenHaveBrownBackground) {
+      childrenArray.forEach((child) => {
+        if (child instanceof HTMLElement && !child.classList.contains('temp-el')) {
+          child.style.backgroundImage = state.backgroundUrl
+        }
+      })
+    } else {
+      childrenArray.forEach((child) => {
+        if (child instanceof HTMLElement && !child.classList.contains('temp-el')) {
+          child.style.backgroundImage = `url('brown-background.jpg')`
+        }
+      })
+    }
+  }
+  }
+  audioTipOn = (): void => {
+    const target = document.getElementById(state.lineNumber.toString())
+    if (target) {
+    const childrenArray = Array.from(target.children)
+    childrenArray.forEach((child) => {
+      //some logic to add later
+    })
+    }
+  }
+
+  translationTipOn = (): void => {
+    const target = document.getElementById(state.lineNumber.toString())
+    if (target) {
+    const childrenArray = Array.from(target.children)
+    childrenArray.forEach((child) => {
+      if (child instanceof HTMLElement) {
+        //some logic to add later
+      }
+    })
+    }
+  }
 }
