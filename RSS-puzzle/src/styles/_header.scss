@@ -1,19 +1,63 @@
+@import './variables';
+@import './mixins';
+@import url('https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Lobster&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Lobster&family=Tillana:wght@400;500;600;700;800&display=swap');
+
 .header {
   position: absolute;
-  top: 15px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   justify-content: space-between;
   max-width: 1000px;
-  height: 70px;
+  min-width: 700px;
+  height: 80px;
   background: rgba(247, 236, 218, 0.6);
+  border: 2px solid $redBook;
+  border-radius: 7px;
+  padding: 5px 10px;
 }
 
 .select-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
   height: 50px;
-  width: 200px;
+  width: 150px;
+  gap: 20px;
+  font-size: 18px;
+}
+
+.round-select {
+  height: 40px;
+  width: 50px;
+  border: 2px solid $redBook;
+  background-color: rgb(241, 230, 217);
+}
+
+.level-select {
+  height: 40px;
+  width: 50px;
+  border: 2px solid $redBook;
+  background-color: rgb(241, 230, 217);
+}
+
+#sel1 select option:hover {
+  background-color: $selectHover;
+  border: 2px solid $selectBorder;
+  color: #fff;
+}
+
+select option:checked {
+  background-color: rgb(128, 113, 99);
+  border: 2px solid $selectBorder;
+  color: #fff;
+}
+
+::selection {
+  background: $selectHover;
+  color: #fff;
 }
 
 .icon-container {

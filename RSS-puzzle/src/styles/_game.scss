@@ -28,25 +28,24 @@ a:hover {
 }
 
 .game {
-  margin-top: 40px;
+  margin-top: 80px;
   font-family: 'Gochi Hand', cursive;
   font-size: 36px;
   color: rgb(54, 108, 10);
   text-align: center;
-  border: 2px solid $redBook;
-  border-radius: 7px;
 }
 
 .picture {
-  margin-top: 25px;
+  margin-top: 10px;
   position: relative;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 0.5em;
-  width: 750px;
-  height: 562.5px;
-  // background: url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level1/winter_l.jpg?raw=true');
+  width: 975px;
+  height: 548px;
+  //background: url('./images/level1/cut/deerhunt.jpg');
   background-size: cover;
-
+  border: 2px solid $redBook;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
   gap: 0px;
@@ -61,6 +60,15 @@ a:hover {
   box-shadow: 2px 2px 4px rgba(85, 84, 84, 0.4);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
+}
+
+.translation-container {
+  display: inline-block;
+  height: 50px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: left;
 }
 
 .line-container {
@@ -84,7 +92,7 @@ a:hover {
   font-weight: 600;
   width: 100px;
   height: 75px;
-  // background: url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level1/winter_l.jpg?raw=true');
+  // background: url('../../images/level1/deeplake.jpg');
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.2),
     0 6px 20px rgba(0, 0, 0, 0.19);
@@ -122,28 +130,6 @@ a:hover {
     background: linear-gradient(to right, #f7f3f3, #bfbbbb);
     border: 2px solid #2f2e2e;
   }
-}
-
-.timer0 {
-  font-family: 'Orbitron', sans-serif;
-  width: 115px;
-  text-align: center;
-  font-size: 32px;
-  font-weight: 400;
-  color: $darkPinkColor;
-}
-
-.timer1 {
-  font-family: 'Orbitron', sans-serif;
-  width: 115px;
-  text-align: center;
-  font-size: 32px;
-  font-weight: 400;
-  color: $blueColor;
-}
-
-.scoresButton {
-  width: 80px;
 }
 
 .muteButton {
@@ -218,74 +204,14 @@ a:hover {
   width: 100px;
 }
 
-#sel1 select option:hover {
-  background-color: $selectHover;
-  border: 2px solid $selectBorder;
-  color: #fff;
-}
-
-select option:checked {
-  background-color: $selectHover;
-  border: 2px solid $selectBorder;
-  color: #fff;
-}
-
-::selection {
-  background: $selectHover;
-  color: #fff;
-}
-
 .option00 {
   background-color: $pinkSelectOption0;
-}
-
-.option10 {
-  background-color: $pinkSelectOption1;
-}
-
-.option20 {
-  background-color: $pinkSelectOption2;
-}
-
-.option30 {
-  background-color: $pinkSelectOption3;
-}
-
-.option40 {
-  background-color: $pinkSelectOption4;
-}
-
-.option50 {
-  background-color: $pinkSelectOption5;
-}
-
-.option01 {
-  background-color: $blueSelectOption0;
-}
-
-.option11 {
-  background-color: $blueSelectOption1;
-}
-
-.option21 {
-  background-color: $blueSelectOption2;
-}
-
-.option31 {
-  background-color: $blueSelectOption3;
-}
-
-.option41 {
-  background-color: $blueSelectOption4;
-}
-
-.option51 {
-  background-color: $blueSelectOption5;
 }
 
 .continue {
   background-color: $redBook;
   border: 2px solid $greenBook;
+  width: 100px;
   border-radius: 7px;
   color: rgb(240, 237, 136);
   height: 50px;
@@ -296,7 +222,7 @@ select option:checked {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 10px 2px;
+  margin: 10px 20px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -307,7 +233,6 @@ select option:checked {
 }
 
 .disabled2 {
-  margin-bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -323,7 +248,7 @@ select option:checked {
   display: inline-block;
   cursor: not-allowed;
   background: linear-gradient(to left, #f7f3f3, #bfbbbb);
-  margin: 10px 2px;
+  margin: 10px 20px;
   transition: background 0.5s ease;
 
   &:hover {

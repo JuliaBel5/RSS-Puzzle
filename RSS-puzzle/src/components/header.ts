@@ -1,6 +1,6 @@
+import { state } from '../main'
 import { createElement } from '../utils/createElement'
 type HandlerFunction = () => void
-type HandlerFunction1 = (target: HTMLElement) => void
 
 export class Header {
   element: HTMLElement
@@ -9,6 +9,8 @@ export class Header {
   backgroundTip: HTMLElement | undefined
   audioTip: HTMLElement | undefined
   translationTip: HTMLElement | undefined
+  levelSelect: HTMLSelectElement | undefined
+  roundSelect: HTMLSelectElement | undefined
 
   constructor(element: HTMLElement) {
     this.element = element
@@ -20,21 +22,23 @@ export class Header {
     const selectContainer = createElement('div', 'select-container')
 
     // select for game levels
-    const levelSelect = createElement('select', 'level-select')
+    this.levelSelect = createElement('select', 'level-select')
     for (let i = 1; i <= 6; i++) {
       const option = createElement('option', '', `${i}`, `level-${i}`)
       option.value = i.toString()
-      levelSelect.appendChild(option)
+      this.levelSelect.appendChild(option)
     }
-
+    this.levelSelect.value = `${state.level}`
     // select for rounds
-    const roundSelect = createElement('select', 'round-select')
+    this.roundSelect = createElement('select', 'round-select')
     for (let i = 1; i <= 40; i++) {
       const option = createElement('option', '', `${i}`, `round-${i}`)
       option.value = i.toString()
-      roundSelect.appendChild(option)
+      this.roundSelect.appendChild(option)
     }
-    selectContainer.append(levelSelect, roundSelect)
+
+    this.roundSelect.value = `${state.round}`
+    selectContainer.append(this.levelSelect, this.roundSelect)
 
     // second container for the icons
     const iconContainer = createElement('div', 'icon-container')
@@ -46,7 +50,7 @@ export class Header {
     ]
     tipIcons.forEach((icon) => {
       const iconElement = createElement('img', icon.id, '', icon.id)
-      iconElement.src = `${icon.id}.png`
+      iconElement.src = `${icon.id}1.png`
       icons.push(iconElement)
       iconContainer.append(iconElement)
     })
@@ -92,15 +96,31 @@ export class Header {
   }
 
   bindAudioTipOn = (handler: HandlerFunction): void => {
-    if (this.backgroundTip) {
-      this.backgroundTip.addEventListener('click', () => {
+    if (this.audioTip) {
+      this.audioTip.addEventListener('click', () => {
         handler()
       })
     }
   }
   bindTranslationTipOn = (handler: HandlerFunction): void => {
-    if (this.backgroundTip) {
-      this.backgroundTip.addEventListener('click', () => {
+    if (this.translationTip) {
+      this.translationTip.addEventListener('click', () => {
+        handler()
+      })
+    }
+  }
+
+  bindRoundSelect = (handler: HandlerFunction): void => {
+    if (this.roundSelect) {
+      this.roundSelect.addEventListener('change', () => {
+        handler()
+      })
+    }
+  }
+
+  bindLevelSelect = (handler: HandlerFunction): void => {
+    if (this.levelSelect) {
+      this.levelSelect.addEventListener('change', () => {
         handler()
       })
     }

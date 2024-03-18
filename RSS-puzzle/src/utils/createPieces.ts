@@ -9,12 +9,13 @@ export function createImagePieces(
   backgroundImageUrl: string = 'brown-background.jpg',
 ) {
   let y = 0
-//  const minWidth = '50px'
-//  const maxWidth = '300px'
+  //  const minWidth = '50px'
+  //  const maxWidth = '300px'
   const pictureElement = document.querySelector('.picture')
   if (pictureElement instanceof HTMLElement) {
     const pictureWidth = pictureElement.offsetWidth
     const pictureHeight = pictureElement.offsetHeight
+    const fragment = document.createDocumentFragment();
 
     list.forEach((item, index) => {
       const lineNumber: number = index + 1
@@ -51,12 +52,9 @@ export function createImagePieces(
           'background-position',
           piece.style.backgroundPosition,
         )
-        lineContainer.append(piece)
-
-        if (container) {
-          container.append(lineContainer)
-          lineContainer.style.display = 'none'
-        }
+        fragment.appendChild(piece);
+        //lineContainer.append(piece)
+        
 
         piece.addEventListener('dragstart', function (e) {
           if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
@@ -153,7 +151,13 @@ export function createImagePieces(
         })
 
         x += widthRatio * item.letters[i].length
+        lineContainer.append(fragment);
 
+        if (container) {
+          
+          container.append(lineContainer)
+          lineContainer.style.display = 'none'
+        }
         lineArr.push(piece)
       }
       lineContainer.style.top = `${y}px`
@@ -164,7 +168,7 @@ export function createImagePieces(
   }
 }
 
-interface ImagePieceData {
+export interface ImagePieceData {
   pieces: number
   letters: string[]
 }
@@ -231,3 +235,25 @@ export function allChildrenHaveClass(
   }
   return true
 }
+
+/*const array1: { pieces: number; letters: string[] }[] = [
+  {
+    pieces: 8,
+    letters: 'The students agree they have too much homework'.split(' '),
+  },
+  { pieces: 7, letters: 'They arrived at school at 7 a.m'.split(' ') },
+  { pieces: 5, letters: 'Is your birthday in August?'.split(' ') },
+  { pieces: 8, letters: 'There is a small boat on the lake'.split(' ') },
+  { pieces: 5, letters: 'I ate eggs for breakfast'.split(' ') },
+  { pieces: 7, letters: 'I brought my camera on my vacation'.split(' ') },
+  {
+    pieces: 9,
+    letters: 'The capital of the United States is Washington, D.C'.split(' '),
+  },
+  {
+    pieces: 9,
+    letters: 'Did you catch the ball during the baseball game?'.split(' '),
+  },
+  { pieces: 6, letters: 'People feed ducks at the lake'.split(' ') },
+  { pieces: 6, letters: 'The woman enjoys riding her bicycle'.split(' ') },
+]*/

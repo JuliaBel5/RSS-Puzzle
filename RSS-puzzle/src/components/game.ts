@@ -3,31 +3,11 @@ import { Header } from './header'
 import { Validation } from './validation'
 import { Toast } from './toast'
 import { showLoader } from '../utils/loader'
-import { createImagePieces } from '../utils/createPieces'
+import { ImagePieceData, createImagePieces } from '../utils/createPieces'
 import { shuffleAndCheck } from '../utils/shuffle'
 import { state } from '../main'
+import { LevelDataResult, transformLevelData } from './levels'
 
-const array: { pieces: number; letters: string[] }[] = [
-  {
-    pieces: 8,
-    letters: 'The students agree they have too much homework'.split(' '),
-  },
-  { pieces: 7, letters: 'They arrived at school at 7 a.m'.split(' ') },
-  { pieces: 5, letters: 'Is your birthday in August?'.split(' ') },
-  { pieces: 8, letters: 'There is a small boat on the lake'.split(' ') },
-  { pieces: 5, letters: 'I ate eggs for breakfast'.split(' ') },
-  { pieces: 7, letters: 'I brought my camera on my vacation'.split(' ') },
-  {
-    pieces: 9,
-    letters: 'The capital of the United States is Washington, D.C'.split(' '),
-  },
-  {
-    pieces: 9,
-    letters: 'Did you catch the ball during the baseball game?'.split(' '),
-  },
-  { pieces: 6, letters: 'People feed ducks at the lake'.split(' ') },
-  { pieces: 6, letters: 'The woman enjoys riding her bicycle'.split(' ') },
-]
 export class Game {
   gameArea: HTMLElement | undefined
   toast = new Toast()
@@ -36,6 +16,12 @@ export class Game {
   roundContainer: HTMLDivElement | undefined
   roundArrays: HTMLElement[][] | undefined
   autoCompleteButton: HTMLButtonElement | undefined
+  translationContainer: HTMLDivElement | undefined
+  game: HTMLDivElement | undefined
+  picture: HTMLDivElement | undefined
+  level: LevelDataResult | undefined
+  array: ImagePieceData[] | undefined
+  continueButton: HTMLButtonElement | undefined
 
   constructor(user: string) {
     this.user = user
@@ -46,98 +32,119 @@ export class Game {
     document.body.append(this.gameArea)
     this.header.bindLogout(this.confirm)
     this.toast.bindConfirmButton(this.logout)
-
     this.init()
   }
 
-  init(): void {
-    const game = createElement('div', 'game', '')
-    if (this.gameArea) {
-      this.gameArea.append(game)
-    }
+  async init(): Promise<void> {
+    await this.useLevel1Data()
 
-    const picture = createElement('div', 'picture', '', 'image')
-    const continueButton = createElement(
-      'button',
-      'disabled2',
-      'Check',
-      'check',
-    )
-    this.autoCompleteButton = createElement(
-      'button',
-      'disabled2',
-      'Help me',
-      'check',
-    )
+    if (this.level) {
+      this.array = this.level.transformedData[state.round - 1].words
+      console.log(this.level.transformedData[0])
+      state.backgroundUrl = `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
+      this.game = createElement('div', 'game', '')
 
-    this.roundContainer = createElement(
-      'div',
-      'round-container',
-      '',
-      'round-container',
-    )
+      this.translationContainer = createElement(
+        'div',
+        'translation-container',
+        ` Здесь будет перевод`,
+      )
 
-    continueButton.addEventListener('click', () => {
-      const target = document.getElementById(`${state.lineNumber}`)
-      if (target) {
-        target.style.border = ''
-        if (continueButton.textContent === 'Check') {
-          this.verifyLine(target, continueButton)
-        } else if (continueButton.textContent === 'Continue') {
-          this.continue(
-            continueButton,
-            state.lineNumber,
-            state.round,
-            state.level,
-          )
+      this.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
+      if (this.gameArea) {
+        this.gameArea.append(this.game)
+      }
+
+      this.picture = createElement('div', 'picture', '', 'image')
+      this.picture.style.background = state.backgroundUrl
+
+      this.continueButton = createElement(
+        'button',
+        'disabled2',
+        'Check',
+        'check',
+      )
+      this.autoCompleteButton = createElement(
+        'button',
+        'disabled2',
+        'Help me',
+        'check',
+      )
+
+      this.roundContainer = createElement(
+        'div',
+        'round-container',
+        '',
+        'round-container',
+      )
+
+      this.continueButton.addEventListener('click', () => {
+        const target = document.getElementById(`${state.lineNumber}`)
+        if (target && this.continueButton) {
+          target.style.border = ''
+          if (this.continueButton.textContent === 'Check') {
+            this.verifyLine(target, this.continueButton)
+          } else if (this.continueButton.textContent === 'Continue') {
+            this.continue(
+              this.continueButton,
+              state.lineNumber,
+              state.round,
+              state.level,
+            )
+          }
         }
-      }
-    })
+      })
 
-    this.autoCompleteButton.addEventListener('click', () => {
-      const target = document.getElementById(`${state.lineNumber}`)
-      if (target) {
-        const children = target.children
-        const elementsWithIds = Array.from(children).map((child) => ({
-          element: child,
-          idNum: parseInt(child.id.split('-')[1], 10),
-        }))
-        elementsWithIds.sort((a, b) => a.idNum - b.idNum)
+      this.autoCompleteButton.addEventListener('click', () => {
+        const target = document.getElementById(`${state.lineNumber}`)
+        if (target && this.continueButton) {
+          const children = target.children
+          const elementsWithIds = Array.from(children).map((child) => ({
+            element: child,
+            idNum: parseInt(child.id.split('-')[1], 10),
+          }))
+          elementsWithIds.sort((a, b) => a.idNum - b.idNum)
 
-        target.innerHTML = ''
+          target.innerHTML = ''
 
-        elementsWithIds.forEach((item) => target.appendChild(item.element))
-        continueButton.classList.add('continue')
-        continueButton.classList.remove('disabled2')
-      }
-    })
-    this.roundArrays = []
+          elementsWithIds.forEach((item) => target.appendChild(item.element))
+          this.continueButton.classList.add('continue')
+          this.continueButton.classList.remove('disabled2')
+        }
+      })
+      this.roundArrays = []
 
-    game.append(
-      picture,
-      this.roundContainer,
-      this.autoCompleteButton,
-      continueButton,
-    )
-    createImagePieces(
-      picture,
-      this.roundContainer,
-      state.lineNumber,
-      this.roundArrays,
-      array,
-    )
-    this.startRound(
-      this.roundArrays,
-      this.roundContainer,
-      state.lineNumber,
-      continueButton,
-    )
-    
-    this.header.bindTranslationTipOn(this.translationTipOn)
-    this.header.bindAudioTipOn(this.audioTipOn)
-    this.header.bindBackgroundTipOn(this.backgroundTipOn)
+      this.game.append(
+        this.translationContainer,
+        this.picture,
+        this.roundContainer,
+        this.autoCompleteButton,
+        this.continueButton,
+      )
+      createImagePieces(
+        this.picture,
+        this.roundContainer,
+        state.lineNumber,
+        this.roundArrays,
+        this.array,
+      )
+      this.startGame(
+        this.roundArrays,
+        this.roundContainer,
+        state.lineNumber,
+        this.continueButton,
+      )
+
+      this.header.bindTranslationTipOn(this.translationTipOn)
+      this.header.bindAudioTipOn(this.audioTipOn)
+      this.header.bindBackgroundTipOn(this.backgroundTipOn)
+      this.header.bindRoundSelect(this.roundSelect)
+      this.header.bindLevelSelect(this.levelSelect)
+      this.translationContainer.style.visibility = 'hidden'
+    }
   }
-  startRound = (
+
+  startGame = (
     roundArrays: HTMLElement[][],
     roundContainer: HTMLElement,
     lineNumber: number,
@@ -464,7 +471,6 @@ export class Game {
           }
         }
       })
-      //TODO подключить селекты
     }
   }
   continue = (
@@ -475,26 +481,23 @@ export class Game {
   ): void => {
     if (lineNumber <= 9) {
       state.lineNumber += 1
-      button.classList.add('disabled2')
-      button.textContent = 'Check'
-      if (this.roundArrays && this.roundContainer) {
-        this.startRound(
-          this.roundArrays,
-          this.roundContainer,
-          state.lineNumber,
-          button,
-        )
-        const target = document.getElementById(state.lineNumber.toString())
-        if (target) {
-          target.style.border = ''
-        }
-      }
-    } else if (lineNumber > 9 && round < 41) {
-      state.round = 1 + round
-      button.classList.add('disabled2')
-    } else if (round === 41 && level <= 5) {
-      state.level = level + 1
-      button.classList.add('disabled2')
+      this.updateLine()
+    } else if (
+      lineNumber > 9 &&
+      round < state.roundsCount &&
+      this.autoCompleteButton &&
+      this.level
+    ) {
+      state.round += 1
+
+      //TODO подключить селекты
+      console.log(state.backgroundUrl, 'state.backgroundUrl')
+
+      this.updateRound()
+    } else if (round === state.roundsCount && level <= 5) {
+      state.level += 1
+
+      this.updateLevel()
     } else {
       console.log('You won')
     }
@@ -534,6 +537,7 @@ export class Game {
             !child.classList.contains('temp-el')
           ) {
             child.style.backgroundImage = state.backgroundUrl
+            console.log(state.backgroundUrl)
           }
         })
       } else {
@@ -559,14 +563,90 @@ export class Game {
   }
 
   translationTipOn = (): void => {
-    const target = document.getElementById(state.lineNumber.toString())
-    if (target) {
-      const childrenArray = Array.from(target.children)
-      childrenArray.forEach((child) => {
-        if (child instanceof HTMLElement) {
-          //some logic to add later
-        }
-      })
+    if (this.translationContainer) {
+      if (this.translationContainer.style.visibility === 'hidden') {
+        this.translationContainer.style.visibility = 'visible'
+      } else {
+        this.translationContainer.style.visibility = 'hidden'
+      }
+    }
+  }
+  async useLevel1Data() {
+    const level1Data = await transformLevelData(state.level)
+    this.level = level1Data
+    state.roundsCount = this.level.roundsCount
+    this.updateLine()
+    console.log(state.roundsCount)
+  }
+
+  updateLine(): void {
+    if (this.translationContainer && this.level && this.continueButton) {
+      this.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
+      this.continueButton.classList.add('disabled2')
+      this.continueButton.classList.remove('continue')
+      this.autoCompleteButton?.classList.add('disabled2')
+      this.autoCompleteButton?.classList.remove('continue')
+      this.continueButton.textContent = 'Check'
+    }
+
+    if (this.roundArrays && this.roundContainer && this.continueButton) {
+      this.startGame(
+        this.roundArrays,
+        this.roundContainer,
+        state.lineNumber,
+        this.continueButton,
+      )
+      const target = document.getElementById(state.lineNumber.toString())
+      if (target) {
+        target.style.border = ''
+      }
+    }
+  }
+
+  updateRound(): void {
+    state.lineNumber = 1
+    if (this.level) {
+      this.roundArrays = []
+
+      state.backgroundUrl = `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
+
+      this.array = this.level.transformedData[state.round - 1].words
+      if (this.roundContainer && this.picture) {
+        this.picture.innerHTML = ''
+        this.picture.style.background = state.backgroundUrl
+        createImagePieces(
+          this.picture,
+          this.roundContainer,
+          state.lineNumber,
+          this.roundArrays,
+          this.array,
+        )
+        this.updateLine()
+      }
+      if (this.header.roundSelect)
+        this.header.roundSelect.value = `${state.round}`
+    }
+  }
+
+  async updateLevel() {
+    state.round = 1
+    await this.useLevel1Data()
+    this.updateRound()
+    if (this.header.levelSelect)
+      this.header.levelSelect.value = `${state.level}`
+  }
+
+  roundSelect = () => {
+    if (this.header.roundSelect) {
+      state.round = Number(this.header.roundSelect.value)
+      this.updateRound()
+    }
+  }
+
+  levelSelect = () => {
+    if (this.header.levelSelect) {
+      state.level = Number(this.header.levelSelect.value)
+      this.updateLevel()
     }
   }
 }

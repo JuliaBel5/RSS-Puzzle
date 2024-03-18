@@ -41,3 +41,26 @@ interface Word {
 interface Round {
   words: Word[]
 }
+
+export async function fetchAndTransformData() {
+  try {
+    const response = await fetch(
+      `https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/data/wordCollectionLevel${state.level}.json`,
+    )
+    // Parse the JSON data
+    const data = await response.json()
+
+    // Transform the data into the desired array format
+    const array = data.rounds.flatMap((round: Round) => {
+      return round.words.map((word: Word) => {
+        return {
+          pieces: word.textExample.split(' ').length,
+          letters: word.textExample.split(' '),
+        }
+      })
+    })
+    console.log(array)
+  } catch (error) {
+    console.error('Error:', error)
+  }
+}
