@@ -22,6 +22,7 @@ export class Game {
   level: LevelDataResult | undefined
   array: ImagePieceData[] | undefined
   continueButton: HTMLButtonElement | undefined
+  audio: HTMLAudioElement | undefined
 
   constructor(user: string) {
     this.user = user
@@ -42,8 +43,12 @@ export class Game {
       this.array = this.level.transformedData[state.round - 1].words
       console.log(this.level.transformedData[0])
       state.backgroundUrl = `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
+      state.audioSrc = `${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
       this.game = createElement('div', 'game', '')
-
+      this.audio = new Audio()
+      console.log('state.audioSrc', state.audioSrc)
+      this.audio.src = state.audioSrc
+      this.audio.volume = 0.3
       this.translationContainer = createElement(
         'div',
         'translation-container',
@@ -57,7 +62,7 @@ export class Game {
 
       this.picture = createElement('div', 'picture', '', 'image')
       this.picture.style.background = state.backgroundUrl
-
+    
       this.continueButton = createElement(
         'button',
         'disabled2',
@@ -86,7 +91,6 @@ export class Game {
             this.verifyLine(target, this.continueButton)
           } else if (this.continueButton.textContent === 'Continue') {
             this.continue(
-              this.continueButton,
               state.lineNumber,
               state.round,
               state.level,
@@ -475,7 +479,6 @@ export class Game {
     }
   }
   continue = (
-    button: HTMLElement,
     lineNumber: number,
     round: number,
     level: number,
@@ -490,10 +493,6 @@ export class Game {
       this.level
     ) {
       state.round += 1
-
-      //TODO подключить селекты
-      console.log(state.backgroundUrl, 'state.backgroundUrl')
-
       this.updateRound()
     } else if (round === state.roundsCount && level <= 5) {
       state.level += 1
@@ -556,12 +555,9 @@ export class Game {
     }
   }
   audioTipOn = (): void => {
-    const target = document.getElementById(state.lineNumber.toString())
-    if (target) {
-      const childrenArray = Array.from(target.children)
-      childrenArray.forEach((child) => {
-        //some logic to add later
-      })
+    if (this.audio) {
+    console.log(this.audio.src)
+    this.audio.play()
     }
   }
 
@@ -586,14 +582,19 @@ export class Game {
   }
 
   updateLine(): void {
-    if (this.translationContainer && this.level && this.continueButton) {
-      this.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
+    if (this.translationContainer && this.level && this.continueButton && this.audio) {
+      state.audioSrc = `${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+     
+      this.audio.src = state.audioSrc
+      state.translation = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
+      this.translationContainer.textContent = state.translation
       this.continueButton.classList.add('disabled2')
       this.continueButton.classList.remove('continue')
       this.autoCompleteButton?.classList.add('disabled2')
       this.autoCompleteButton?.classList.remove('continue')
       this.continueButton.textContent = 'Check'
-    }
+    
+  }
 
     if (this.roundArrays && this.roundContainer && this.continueButton) {
       this.startGame(

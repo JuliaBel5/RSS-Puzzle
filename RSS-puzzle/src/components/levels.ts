@@ -3,7 +3,6 @@ import { state } from '../main'
 export async function transformLevelData(
   level: number,
 ): Promise<LevelDataResult> {
-  // Dynamically import the JSON file based on the level number
   const { default: levelFile } = await import(
     `../data/wordCollectionLevel${level}.json`
   )
@@ -19,7 +18,7 @@ export async function transformLevelData(
             letters: word.textExample.split(' '),
           }
         }),
-        audio: el.words.map((word) => word.audioExample),
+        audioSrc: el.words.map((word) => word.audioExample),
         translation: el.words.map((word) => word.textExampleTranslate),
       }
     },
@@ -72,7 +71,7 @@ interface TransformedData {
     pieces: number
     letters: string[]
   }[]
-  audio: string[]
+  audioSrc: string[]
   translation: string[]
 }
 export interface LevelDataResult {

@@ -10,6 +10,8 @@ export const state = {
   round: 45,
   lineNumber: 9,
   roundsCount: 1,
+  audioSrc: '',
+  translation: '',
   backgroundUrl: `url('https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/images/level6/6_07.jpg?raw=true')`,
   translationTip: false,
   audioTip: false,
