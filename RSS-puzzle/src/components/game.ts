@@ -37,7 +37,7 @@ export class Game {
   }
 
   async init(): Promise<void> {
-    await this.useLevel1Data()
+    await this.useLevelData()
 
     if (this.level) {
       this.array = this.level.transformedData[state.round - 1].words
@@ -110,11 +110,20 @@ export class Game {
           elementsWithIds.sort((a, b) => a.idNum - b.idNum)
 
           target.innerHTML = ''
-
-          elementsWithIds.forEach((item) => target.appendChild(item.element))
           this.continueButton.classList.add('continue')
           this.continueButton.classList.remove('disabled2')
-        }
+        
+          elementsWithIds.forEach((item) => {
+            target.appendChild(item.element)
+            if (item.element instanceof HTMLElement) {
+            
+            }
+          })
+          if (this.audio) {
+          this.audio.src = 'Bibip.mp3'
+          this.audio.play()
+          }
+      }
       })
       this.roundArrays = []
 
@@ -154,8 +163,7 @@ export class Game {
     lineNumber: number,
     continueButton: HTMLElement,
   ) => {
-    console.log(state.lineNumber, 'line number')
-    this.autoCompleteButton?.classList.remove('continue')
+     this.autoCompleteButton?.classList.remove('continue')
     this.autoCompleteButton?.classList.add('disabled2')
     roundContainer.innerHTML = ''
     const target = document.getElementById(lineNumber.toString())
@@ -456,9 +464,14 @@ export class Game {
         button.textContent = 'Check'
         button.classList.add('disabled2')
         target.style.border = '2px solid red'
+        if (this.audio) {
+          this.audio.src = 'error.mp3'
+          this.audio.play()
+          }
         break
         //TODO подсветить ошибки
       }
+    
     }
 
     if (isOrderCorrect) {
@@ -476,6 +489,10 @@ export class Game {
           }
         }
       })
+      if (this.audio) {
+        this.audio.src = 'solution.wav'
+        this.audio.play()
+        }
     }
   }
   continue = (
@@ -486,6 +503,10 @@ export class Game {
     if (lineNumber <= 9) {
       state.lineNumber += 1
       this.updateLine()
+      if (this.audio) {
+        this.audio.src = 'Collapse.mp3'
+        this.audio.play()
+        }
     } else if (
       lineNumber > 9 &&
       round < state.roundsCount &&
@@ -493,11 +514,17 @@ export class Game {
       this.level
     ) {
       state.round += 1
+      
       this.updateRound()
+      if (this.audio) {
+        this.audio.src = 'newround2.mp3'
+        this.audio.play()
+        }
     } else if (round === state.roundsCount && level <= 5) {
       state.level += 1
-
+   
       this.updateLevel()
+     
     } else {
       console.log('You won')
     }
@@ -539,7 +566,10 @@ export class Game {
             !child.classList.contains('temp-el')
           ) {
             child.style.backgroundImage = state.backgroundUrl
-            console.log(state.backgroundUrl)
+            if (this.audio) {
+              this.audio.src = 'zviak.mp3'
+              this.audio.play()
+              }
           }
         })
       } else {
@@ -556,16 +586,29 @@ export class Game {
   }
   audioTipOn = (): void => {
     if (this.audio) {
-    console.log(this.audio.src)
-    this.audio.play()
+      this.audio.src = state.audioSrc
+       this.audio.play();
+       if (this.header.audioTip && this.header.audioTip instanceof HTMLImageElement) {
+       this.header.audioTip.src = 'audioTipDis.png'
+
+       this.audio.addEventListener('ended', () => {
+        if (this.header.audioTip && this.header.audioTip instanceof HTMLImageElement) {
+        this.header.audioTip.src = 'audioTip1.png'
+        }
+       });
+      }
     }
-  }
+   }
 
   translationTipOn = (): void => {
     if (this.translationContainer && this.header.translationTip instanceof HTMLImageElement) {
       if (this.translationContainer.style.visibility === 'hidden') {
         this.translationContainer.style.visibility = 'visible'
         this.header.translationTip.src = 'translationTip1.png'
+        if (this.audio) {
+          this.audio.src = 'dzing.mp3'
+          this.audio.play()
+          }
         
       } else {
         this.translationContainer.style.visibility = 'hidden'
@@ -573,12 +616,11 @@ export class Game {
       }
     }
   }
-  async useLevel1Data() {
-    const level1Data = await transformLevelData(state.level)
-    this.level = level1Data
+  async useLevelData() {
+    const useLevelData = await transformLevelData(state.level)
+    this.level = useLevelData
     state.roundsCount = this.level.roundsCount
-    this.updateLine()
-    console.log(state.roundsCount)
+    
   }
 
   updateLine(): void {
@@ -608,6 +650,15 @@ export class Game {
         target.style.border = ''
       }
     }
+    if (this.header.backgroundTip && this.header.backgroundTip instanceof HTMLImageElement) {
+      this.header.backgroundTip.src = 'backgroundTipDis.png'
+    } 
+    if ( this.header.translationTip && this.header.translationTip instanceof HTMLImageElement && this.translationContainer) {
+      this.header.translationTip.src = 'translationTipDis.png'
+      this.translationContainer.style.visibility = 'hidden'
+    }
+    
+    
   }
 
   updateRound(): void {
@@ -633,14 +684,24 @@ export class Game {
       if (this.header.roundSelect)
         this.header.roundSelect.value = `${state.round}`
     }
+    if (this.audio) {
+      this.audio.src = 'newround2.mp3'
+      this.audio.play()
+      }
   }
 
   async updateLevel() {
     state.round = 1
-    await this.useLevel1Data()
+    console.log('state round', state.round)
+    await this.useLevelData()
     this.updateRound()
-    if (this.header.levelSelect)
+    if (this.header.levelSelect) {
       this.header.levelSelect.value = `${state.level}`
+    }
+    if (this.audio) {
+      this.audio.src = 'newlevel.mp3'
+      this.audio.play()
+      }
   }
 
   roundSelect = () => {
@@ -653,6 +714,8 @@ export class Game {
   levelSelect = () => {
     if (this.header.levelSelect) {
       state.level = Number(this.header.levelSelect.value)
+     
+      console.log('state level', state.level)
       this.updateLevel()
     }
   }
