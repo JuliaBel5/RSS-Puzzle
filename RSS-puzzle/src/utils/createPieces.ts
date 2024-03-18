@@ -1,3 +1,4 @@
+import { state } from '../main'
 import { createElement } from './createElement'
 
 export function createImagePieces(
@@ -93,7 +94,7 @@ export function createImagePieces(
                 draggableElement.parentElement.getAttribute('data-line')
 
               if (
-                curLineNumber === Number(lineData) &&
+                state.lineNumber === Number(lineData) &&
                 dropzone.classList.contains('round-container')
               ) {
                 console.log('Julia')
@@ -108,15 +109,20 @@ export function createImagePieces(
             const id = e.dataTransfer.getData('text')
             const draggableElement = document.getElementById(id)
             const dropzone = e.target
-
-            if (draggableElement && dropzone) {
+           
+           
+            if (draggableElement && dropzone && draggableElement.parentElement && dropzone.parentElement) {
               const dropzoneRect = dropzone.getBoundingClientRect()
               const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
               const draggableElementRect =
                 draggableElement.getBoundingClientRect()
               const draggableElementCenterY =
                 draggableElementRect.top + draggableElementRect.height / 2
-              if (dropzone.parentNode) {
+                const lineData = draggableElement.parentElement.getAttribute('data-line')
+                const lineData1 = dropzone.parentElement.getAttribute('data-line')
+              if (lineData === lineData1 && dropzone.parentNode) {
+                
+               console.log((Number(lineData)) )
                 if (draggableElementCenterY < dropzoneCenterY) {
                   dropzone.parentNode.insertBefore(draggableElement, dropzone)
                   verifyChildrenLength()

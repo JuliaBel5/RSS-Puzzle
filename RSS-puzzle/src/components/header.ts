@@ -31,12 +31,12 @@ export class Header {
     this.levelSelect.value = `${state.level}`
     // select for rounds
     this.roundSelect = createElement('select', 'round-select')
-    for (let i = 1; i <= 40; i++) {
+    for (let i = 1; i <= 46; i++) {
       const option = createElement('option', '', `${i}`, `round-${i}`)
       option.value = i.toString()
       this.roundSelect.appendChild(option)
     }
-
+console.log(`${state.round}`)
     this.roundSelect.value = `${state.round}`
     selectContainer.append(this.levelSelect, this.roundSelect)
 
@@ -51,13 +51,18 @@ export class Header {
     tipIcons.forEach((icon) => {
       const iconElement = createElement('img', icon.id, '', icon.id)
       iconElement.src = `${icon.id}1.png`
+      iconElement.alt = `${icon.label}`
       icons.push(iconElement)
       iconContainer.append(iconElement)
     })
 
     this.backgroundTip = icons[0]
-    this.audioTip = icons[1]
     this.translationTip = icons[2]
+    this.audioTip = icons[1]
+    if (this.backgroundTip instanceof HTMLImageElement && this.translationTip instanceof HTMLImageElement) {
+    this.backgroundTip.src = 'backgroundTipDis.png'
+    this.translationTip.src = 'translationTipDis.png'
+  }
     this.logout = createElement('div', 'logout')
 
     iconContainer.append(this.logout)

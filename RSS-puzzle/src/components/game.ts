@@ -397,17 +397,16 @@ export class Game {
         const draggableElement = document.getElementById(id)
         const dropzone = e.target
 
-        if (draggableElement && dropzone) {
+        if (draggableElement && dropzone && draggableElement.parentElement) {
           const dropzoneRect = dropzone.getBoundingClientRect()
           const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
           const draggableElementRect = draggableElement.getBoundingClientRect()
           const draggableElementCenterY =
             draggableElementRect.top + draggableElementRect.height / 2
-
-          if (
-            dropzone.parentNode &&
-            draggableElementCenterY < dropzoneCenterY
-          ) {
+            const lineData =
+                draggableElement.parentElement.getAttribute('data-line')
+          if (dropzone.parentNode && state.lineNumber === Number(lineData) ) {
+          if (draggableElementCenterY < dropzoneCenterY ) {
             dropzone.parentNode.insertBefore(draggableElement, dropzone)
           } else if (dropzone.parentNode) {
             dropzone.parentNode.insertBefore(
@@ -422,11 +421,13 @@ export class Game {
                 return
               }
             }
+          
           })
 
           //TODO добавить логику удаления временных элементов
         }
       }
+    }
     })
     tempEl.addEventListener('dragover', (e) => {
       e.preventDefault()
@@ -512,7 +513,7 @@ export class Game {
         return (
           child instanceof HTMLElement &&
           child.style.backgroundImage === state.backgroundUrl
-        )
+            )
       })
       const allChildrenHaveBrownBackground = childrenArray.every((child) => {
         return (
@@ -521,7 +522,8 @@ export class Game {
         )
       })
 
-      if (allChildrenHavePictureBackground) {
+      if (allChildrenHavePictureBackground && this.header.backgroundTip instanceof HTMLImageElement) {
+        this.header.backgroundTip.src ='backgroundTipDis.png'
         childrenArray.forEach((child) => {
           if (
             child instanceof HTMLElement &&
@@ -530,7 +532,8 @@ export class Game {
             child.style.backgroundImage = `url("brown-background.jpg")`
           }
         })
-      } else if (allChildrenHaveBrownBackground) {
+      } else if (allChildrenHaveBrownBackground && this.header.backgroundTip instanceof HTMLImageElement) {
+        this.header.backgroundTip.src = 'backgroundTip1.png'
         childrenArray.forEach((child) => {
           if (
             child instanceof HTMLElement &&
@@ -563,11 +566,14 @@ export class Game {
   }
 
   translationTipOn = (): void => {
-    if (this.translationContainer) {
+    if (this.translationContainer && this.header.translationTip instanceof HTMLImageElement) {
       if (this.translationContainer.style.visibility === 'hidden') {
         this.translationContainer.style.visibility = 'visible'
+        this.header.translationTip.src = 'translationTip1.png'
+        
       } else {
         this.translationContainer.style.visibility = 'hidden'
+        this.header.translationTip.src = 'translationTipDis.png'
       }
     }
   }

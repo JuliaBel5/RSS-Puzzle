@@ -44,6 +44,7 @@ a:hover {
   height: 548px;
   //background: url('./images/level1/cut/deerhunt.jpg');
   background-size: cover;
+  background-repeat: no-repeat;
   border: 2px solid $redBook;
   border-radius: 5px;
   display: flex;
@@ -78,8 +79,7 @@ a:hover {
   width: 100%;
 }
 
-.temp-el {
-}
+.temp-el {}
 
 .image-piece {
   display: flex;
