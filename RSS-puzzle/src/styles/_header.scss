@@ -24,22 +24,30 @@
   justify-content: center;
   align-items: center;
   height: 50px;
-  width: 150px;
-  gap: 20px;
+  width: 250px;
+  gap: 10px;
   font-size: 18px;
+}
+
+.label {
+  height: 40px;
+  color: $redBook;
+  font-size: 22px;
 }
 
 .round-select {
   height: 40px;
   width: 50px;
-  border: 2px solid $redBook;
+  border-radius: 5px;
+  border: 2px solid $greenBook;
   background-color: rgb(241, 230, 217);
 }
 
 .level-select {
   height: 40px;
   width: 50px;
-  border: 2px solid $redBook;
+  border-radius: 5px;
+  border: 2px solid $greenBook;
   background-color: rgb(241, 230, 217);
 }
 

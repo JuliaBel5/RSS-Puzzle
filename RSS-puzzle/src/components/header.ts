@@ -20,7 +20,8 @@ export class Header {
   init(): void {
     //first container for the selects
     const selectContainer = createElement('div', 'select-container')
-
+    const levelSelectLabel = createElement('div', 'label', 'Level:')
+    const roundSelectLabel = createElement('div', 'label', 'Round:')
     // select for game levels
     this.levelSelect = createElement('select', 'level-select')
     for (let i = 1; i <= 6; i++) {
@@ -36,9 +37,9 @@ export class Header {
       option.value = i.toString()
       this.roundSelect.appendChild(option)
     }
-console.log(`${state.round}`)
+
     this.roundSelect.value = `${state.round}`
-    selectContainer.append(this.levelSelect, this.roundSelect)
+    selectContainer.append(levelSelectLabel, this.levelSelect, roundSelectLabel, this.roundSelect)
 
     // second container for the icons
     const iconContainer = createElement('div', 'icon-container')

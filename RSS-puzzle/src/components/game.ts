@@ -53,7 +53,7 @@ export class Game {
       this.translationContainer = createElement(
         'div',
         'translation-container',
-        ` Здесь будет перевод`,
+        ``,
       )
 
       this.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
@@ -156,7 +156,7 @@ export class Game {
       this.header.bindBackgroundTipOn(this.backgroundTipOn)
       this.header.bindRoundSelect(this.roundSelect)
       this.header.bindLevelSelect(this.levelSelect)
-      this.translationContainer.style.visibility = 'hidden'
+      this.translationContainer.style.visibility = 'visible'
     }
   }
 
