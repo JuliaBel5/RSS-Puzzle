@@ -42,11 +42,12 @@ export class Game {
     if (this.level) {
       this.array = this.level.transformedData[state.round - 1].words
       console.log(this.level.transformedData[0])
-      state.backgroundUrl = `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
-      state.audioSrc = `${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+      state.backgroundUrl = `url('https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/images/${this.level.transformedData[state.round - 1].imageSRC}')`
+      //`url("/${this.level.transformedData[state.round - 1].imageSRC}")`
+      state.audioSrc = `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+      //`${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
       this.game = createElement('div', 'game', '')
       this.audio = new Audio()
-      console.log('state.audioSrc', state.audioSrc)
       this.audio.src = state.audioSrc
       this.audio.volume = 0.3
       this.translationContainer = createElement(
@@ -420,7 +421,7 @@ export class Game {
           if (dropzone.parentNode && state.lineNumber === Number(lineData) ) {
           if (draggableElementCenterY < dropzoneCenterY ) {
             dropzone.parentNode.insertBefore(draggableElement, dropzone)
-          } else if (dropzone.parentNode) {
+              } if( draggableElementCenterY > dropzoneCenterY)  {
             dropzone.parentNode.insertBefore(
               draggableElement,
               dropzone.nextSibling,
@@ -430,7 +431,7 @@ export class Game {
           allTempEl.map((el) => {
             if (el instanceof HTMLElement) {
               if (el.style.width === draggableElement.style.width) {
-                return
+                el.parentNode?.removeChild(el)
               }
             }
           
@@ -625,7 +626,8 @@ export class Game {
 
   updateLine(): void {
     if (this.translationContainer && this.level && this.continueButton && this.audio) {
-      state.audioSrc = `${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+      state.audioSrc = `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+      //`${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
      
       this.audio.src = state.audioSrc
       state.translation = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
@@ -666,7 +668,8 @@ export class Game {
     if (this.level) {
       this.roundArrays = []
 
-      state.backgroundUrl = `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
+      state.backgroundUrl = `url('https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/images/${this.level.transformedData[state.round - 1].imageSRC}')`
+      //`url("/${this.level.transformedData[state.round - 1].imageSRC}")`
 
       this.array = this.level.transformedData[state.round - 1].words
       if (this.roundContainer && this.picture) {

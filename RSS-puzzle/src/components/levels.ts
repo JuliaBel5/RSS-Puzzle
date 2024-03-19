@@ -1,4 +1,4 @@
-import { state } from '../main'
+//import { state } from '../main'
 
 export async function transformLevelData(
   level: number,
@@ -60,10 +60,6 @@ interface Round {
   words: Word[]
 }
 
-interface Data {
-  rounds: Round[]
-  roundsCount: number
-}
 
 interface TransformedData {
   imageSRC: string

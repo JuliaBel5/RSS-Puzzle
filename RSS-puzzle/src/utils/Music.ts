@@ -1,5 +1,9 @@
-export class Music {
+/*export class Music {
+  if (localStorage.getItem('julMuted'): string) {
   static isMuted = JSON.parse(localStorage.getItem('julMuted')) ?? false
+  }
+  audio: HTMLAudioElement
+  path: string
 
   constructor() {
     this.audio = new Audio()
@@ -48,3 +52,4 @@ export class Music {
     this.audio.currentTime = 0
   }
 }
+*/

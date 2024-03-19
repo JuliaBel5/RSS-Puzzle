@@ -9,10 +9,7 @@ async function fetchData() {
     }
 
     const data = await response.json()
-    const roundsCount = data.roundsCount
-    const levelInfo = data.rounds[0].levelData // Assuming you want the first level's info
 
-    // Extracting round info for each round
     data.rounds.forEach((round: Round) => {
       const roundInfo = round.words.map((word: Word) => ({
         audioExample: word.audioExample,

@@ -149,12 +149,7 @@ export function createImagePieces(
             e.dataTransfer.dropEffect = 'move'
           }
         })
-        piece.addEventListener('dragover', (e) => {
-          e.preventDefault()
-          if (e.dataTransfer) {
-            e.dataTransfer.dropEffect = 'move'
-          }
-        })
+        
 
         x += widthRatio * item.letters[i].length
         lineContainer.append(fragment);

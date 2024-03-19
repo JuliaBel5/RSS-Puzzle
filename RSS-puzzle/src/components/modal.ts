@@ -1,5 +1,5 @@
 import { createElement } from '../utils/createElement'
-import { Music } from '../utils/Music'
+//import { Music } from '../utils/Music'
 const button = 'button.mp3'
 
 export class Modal {
@@ -7,18 +7,19 @@ export class Modal {
   section: HTMLElement
   modal: HTMLElement | null
   isShown: boolean
-  audio: Music
+
   modalContent: HTMLDivElement | undefined
   title: HTMLDivElement | undefined
   message: HTMLDivElement | undefined
   modalButton: HTMLButtonElement | undefined
+  audio: HTMLAudioElement
 
   constructor(section: HTMLElement) {
     this.overlay = null
     this.section = section
     this.modal = null
     this.isShown = false
-    this.audio = new Music()
+    this.audio = new Audio()
   }
 
   handleEnter = (event: KeyboardEvent) => {
@@ -41,7 +42,8 @@ export class Modal {
       'Return to the game',
     )
     this.modalButton.addEventListener('click', () => {
-      this.audio.play(button)
+      this.audio.src = button
+      this.audio.play()
       this.remove()
     })
 
