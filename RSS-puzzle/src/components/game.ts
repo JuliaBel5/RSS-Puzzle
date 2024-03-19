@@ -516,6 +516,9 @@ export class Game {
       this.autoCompleteButton &&
       this.level
     ) {
+      if (this.header.roundSelect) {
+      this.header.changeOptionColor(this.header.roundSelect, state.round)
+      }
       state.round += 1
       
       this.updateRound()
@@ -524,8 +527,14 @@ export class Game {
         this.audio.play()
         }
     } else if (round === state.roundsCount && level <= 5) {
-      state.level += 1
-   
+      
+      if (this.header.roundSelect) {
+        this.header.changeOptionColor(this.header.roundSelect, state.round)
+        }
+        if (this.header.levelSelect) {
+          this.header.changeOptionColor(this.header.levelSelect, state.level)
+          }
+          state.level += 1
       this.updateLevel()
      
     } else {
@@ -626,6 +635,7 @@ export class Game {
     const useLevelData = await transformLevelData(state.level)
     this.level = useLevelData
     state.roundsCount = this.level.roundsCount
+    this.header.createRoundSelect()
     
   }
 

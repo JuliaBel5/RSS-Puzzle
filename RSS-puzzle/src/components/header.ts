@@ -131,4 +131,23 @@ export class Header {
       })
     }
   }
+  changeOptionColor(selectElement: HTMLSelectElement, i: number) {
+    if (selectElement && selectElement.options) {
+      const option = selectElement.options[i-1];
+      console.log('option.value', option.value, 'i', i)
+      if (option.value === i.toString()) {
+        option.style.backgroundColor = 'rgba(196,221,164, 0.5)';
+      }
+    }
+  }
+  createRoundSelect() {
+    if (this.roundSelect) {
+      this.roundSelect.innerHTML = ''
+    for (let i = 1; i <= state.roundsCount; i++) {
+      const option = createElement('option', '', `${i}`, `round-${i}`)
+      option.value = i.toString()
+      this.roundSelect.appendChild(option)
+    }
+  }
+  }
 }
