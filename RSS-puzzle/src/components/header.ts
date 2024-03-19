@@ -60,8 +60,8 @@ console.log(`${state.round}`)
     this.translationTip = icons[2]
     this.audioTip = icons[1]
     if (this.backgroundTip instanceof HTMLImageElement && this.translationTip instanceof HTMLImageElement) {
-    this.backgroundTip.src = 'backgroundTipDis.png'
-    this.translationTip.src = 'translationTipDis.png'
+    this.backgroundTip.src = 'backgroundTip1.png'
+    this.translationTip.src = 'translationTip1.png'
   }
     this.logout = createElement('div', 'logout')
 

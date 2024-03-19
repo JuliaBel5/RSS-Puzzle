@@ -535,7 +535,6 @@ export class Game {
   backgroundTipOn = (): void => {
     const target = document.getElementById(state.lineNumber.toString())
     if (target) {
-      console.log('target available')
       const childrenArray = Array.from(target.children)
 
       const allChildrenHavePictureBackground = childrenArray.every((child) => {
@@ -616,6 +615,10 @@ export class Game {
       } else {
         this.translationContainer.style.visibility = 'hidden'
         this.header.translationTip.src = 'translationTipDis.png'
+        if (this.audio) {
+          this.audio.src = 'dzing.mp3'
+          this.audio.play()
+          }
       }
     }
   }
