@@ -62,7 +62,9 @@ export class Game {
       }
 
       this.picture = createElement('div', 'picture', '', 'image')
-      this.picture.style.background = state.backgroundUrl
+      this.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
+      this.picture.style.backgroundBlendMode = `saturation`;
+      //state.backgroundUrl
     
       this.continueButton = createElement(
         'button',
@@ -674,7 +676,8 @@ export class Game {
       this.array = this.level.transformedData[state.round - 1].words
       if (this.roundContainer && this.picture) {
         this.picture.innerHTML = ''
-        this.picture.style.background = state.backgroundUrl
+        this.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
+        this.picture.style.backgroundBlendMode = `saturation`;
         createImagePieces(
           this.picture,
           this.roundContainer,
