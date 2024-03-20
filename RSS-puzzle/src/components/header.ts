@@ -39,7 +39,12 @@ export class Header {
     }
 
     this.roundSelect.value = `${state.round}`
-    selectContainer.append(levelSelectLabel, this.levelSelect, roundSelectLabel, this.roundSelect)
+    selectContainer.append(
+      levelSelectLabel,
+      this.levelSelect,
+      roundSelectLabel,
+      this.roundSelect,
+    )
 
     // second container for the icons
     const iconContainer = createElement('div', 'icon-container')
@@ -60,10 +65,13 @@ export class Header {
     this.backgroundTip = icons[0]
     this.translationTip = icons[2]
     this.audioTip = icons[1]
-    if (this.backgroundTip instanceof HTMLImageElement && this.translationTip instanceof HTMLImageElement) {
-    this.backgroundTip.src = 'backgroundTip1.png'
-    this.translationTip.src = 'translationTip1.png'
-  }
+    if (
+      this.backgroundTip instanceof HTMLImageElement &&
+      this.translationTip instanceof HTMLImageElement
+    ) {
+      this.backgroundTip.src = 'backgroundTip1.png'
+      this.translationTip.src = 'translationTip1.png'
+    }
     this.logout = createElement('div', 'logout')
 
     iconContainer.append(this.logout)
@@ -133,21 +141,21 @@ export class Header {
   }
   changeOptionColor(selectElement: HTMLSelectElement, i: number) {
     if (selectElement && selectElement.options) {
-      const option = selectElement.options[i-1];
+      const option = selectElement.options[i - 1]
       console.log('option.value', option.value, 'i', i)
       if (option.value === i.toString()) {
-        option.style.backgroundColor = 'rgba(196,221,164, 0.5)';
+        option.style.backgroundColor = 'rgba(196,221,164, 0.5)'
       }
     }
   }
   createRoundSelect() {
     if (this.roundSelect) {
       this.roundSelect.innerHTML = ''
-    for (let i = 1; i <= state.roundsCount; i++) {
-      const option = createElement('option', '', `${i}`, `round-${i}`)
-      option.value = i.toString()
-      this.roundSelect.appendChild(option)
+      for (let i = 1; i <= state.roundsCount; i++) {
+        const option = createElement('option', '', `${i}`, `round-${i}`)
+        option.value = i.toString()
+        this.roundSelect.appendChild(option)
+      }
     }
-  }
   }
 }

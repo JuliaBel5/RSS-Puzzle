@@ -1,5 +1,3 @@
-//import { state } from '../main'
-
 export async function transformLevelData(
   level: number,
 ): Promise<LevelDataResult> {
@@ -7,11 +5,13 @@ export async function transformLevelData(
     `../data/wordCollectionLevel${level}.json`
   )
 
-  // Transform the data
   const transformedData: TransformedData[] = levelFile.rounds.map(
     (el: Round): TransformedData => {
       return {
         imageSRC: el.levelData.cutSrc,
+        name: el.levelData.name,
+        author: el.levelData.author,
+        year: el.levelData.year,
         words: el.words.map((word: Word) => {
           return {
             pieces: word.textExample.split(' ').length,
@@ -29,13 +29,6 @@ export async function transformLevelData(
     roundsCount: levelFile.roundsCount,
   }
 }
-// Generate constants for each level
-// export const level = transformLevelData();
-/* export const level2 = transformLevelData(2);
- export const level3 = transformLevelData(3);
- export const level4 = transformLevelData(4);
- export const level5 = transformLevelData(5);
- export const level6 = transformLevelData(6);*/
 
 interface Word {
   audioExample: string
@@ -60,9 +53,11 @@ interface Round {
   words: Word[]
 }
 
-
 interface TransformedData {
   imageSRC: string
+  name: string
+  author: string
+  year: string
   words: {
     pieces: number
     letters: string[]

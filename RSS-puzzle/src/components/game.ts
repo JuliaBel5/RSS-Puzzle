@@ -23,6 +23,7 @@ export class Game {
   array: ImagePieceData[] | undefined
   continueButton: HTMLButtonElement | undefined
   audio: HTMLAudioElement | undefined
+  userData: UserData
 
   constructor(user: string) {
     this.user = user
@@ -33,7 +34,18 @@ export class Game {
     document.body.append(this.gameArea)
     this.header.bindLogout(this.confirm)
     this.toast.bindConfirmButton(this.logout)
-    this.init()
+
+    this.userData = {
+      lineNumber: 1,
+      round: 1,
+      level: 1,
+      autocomplete: false,
+    }
+    if (localStorage.getItem('catPuzzleUserData')) {
+      this.getSavedUserData()
+    } else {
+      this.init()
+    }
   }
 
   async init(): Promise<void> {
@@ -41,7 +53,7 @@ export class Game {
 
     if (this.level) {
       this.array = this.level.transformedData[state.round - 1].words
-      console.log(this.level.transformedData[0])
+
       state.backgroundUrl = `url('https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/images/${this.level.transformedData[state.round - 1].imageSRC}')`
       //`url("/${this.level.transformedData[state.round - 1].imageSRC}")`
       state.audioSrc = `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
@@ -63,9 +75,8 @@ export class Game {
 
       this.picture = createElement('div', 'picture', '', 'image')
       this.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
-      this.picture.style.backgroundBlendMode = `saturation`;
-      //state.backgroundUrl
-    
+      this.picture.style.backgroundBlendMode = `saturation`
+
       this.continueButton = createElement(
         'button',
         'disabled2',
@@ -76,7 +87,7 @@ export class Game {
         'button',
         'disabled2',
         'Help me',
-        'check',
+        'autocomplete',
       )
 
       this.roundContainer = createElement(
@@ -93,19 +104,16 @@ export class Game {
           if (this.continueButton.textContent === 'Check') {
             this.verifyLine(target, this.continueButton)
           } else if (this.continueButton.textContent === 'Continue') {
-            this.continue(
-              state.lineNumber,
-              state.round,
-              state.level,
-            )
+            this.continue(state.lineNumber, state.round, state.level)
           }
         }
       })
 
       this.autoCompleteButton.addEventListener('click', () => {
         const target = document.getElementById(`${state.lineNumber}`)
+        const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
+        const children = Array.from(document.querySelectorAll(selector))
         if (target && this.continueButton) {
-          const children = target.children
           const elementsWithIds = Array.from(children).map((child) => ({
             element: child,
             idNum: parseInt(child.id.split('-')[1], 10),
@@ -115,18 +123,20 @@ export class Game {
           target.innerHTML = ''
           this.continueButton.classList.add('continue')
           this.continueButton.classList.remove('disabled2')
-        
+          this.autoCompleteButton?.classList.remove('continue')
+          this.autoCompleteButton?.classList.add('disabled2')
           elementsWithIds.forEach((item) => {
             target.appendChild(item.element)
             if (item.element instanceof HTMLElement) {
-            
             }
           })
           if (this.audio) {
-          this.audio.src = 'Bibip.mp3'
-          this.audio.play()
+            this.audio.src = 'Bibip.mp3'
+            this.audio.play()
           }
-      }
+          this.userData.autocomplete = true
+          this.saveUserData()
+        }
       })
       this.roundArrays = []
 
@@ -140,7 +150,6 @@ export class Game {
       createImagePieces(
         this.picture,
         this.roundContainer,
-        state.lineNumber,
         this.roundArrays,
         this.array,
       )
@@ -166,28 +175,44 @@ export class Game {
     lineNumber: number,
     continueButton: HTMLElement,
   ) => {
-     this.autoCompleteButton?.classList.remove('continue')
-    this.autoCompleteButton?.classList.add('disabled2')
     roundContainer.innerHTML = ''
     const target = document.getElementById(lineNumber.toString())
-
     const gameArrLength = roundArrays[lineNumber - 1].length
     const gameArrIndexes: number[] = Array.from(
       { length: gameArrLength },
       (_, index) => index,
     )
+    const lineNumberArr = Array.from(
+      { length: state.lineNumber - 1 },
+      (_, i) => 1 + i,
+    )
+    lineNumberArr.forEach((num) => {
+      const selector = `.line-container[data-line="${num}"]`
+      const target = document.querySelector(selector)
+
+      if (target instanceof HTMLElement) {
+        target.style.display = 'flex'
+        const childrenArray = Array.from(target.children)
+        childrenArray.forEach((child) => {
+          if (child instanceof HTMLElement) {
+            child.style.backgroundImage = state.backgroundUrl
+          }
+        })
+      }
+    })
     const shuffledGameIndArr = shuffleAndCheck(gameArrIndexes)
     shuffledGameIndArr.forEach((item) => {
       if (target) {
         target.style.display = 'flex'
         const el = roundArrays[lineNumber - 1][item]
         //  el.style.background = `url('brown-background.jpg')`
+        el.style.backgroundImage = state.backgroundUrl
         target.style.border = ''
-        const elWidth = el.style.width
-        const elHeight = el.style.height
-        const tempEl = this.createTemp(elWidth, elHeight)
-        target.append(tempEl)
-        target.insertBefore(tempEl, el)
+        //    const elWidth = el.style.width
+        //   const elHeight = el.style.height
+        //   const tempEl = this.createTemp(elWidth, elHeight)
+        //    target.append(tempEl)
+        //    target.insertBefore(tempEl, el)
         roundContainer.append(el)
 
         el.addEventListener('click', () => {
@@ -213,21 +238,17 @@ export class Game {
               el.style.top = `0px`
 
               if (
-                (this.autoCompleteButton &&
-                  this.allChildrenHaveClass(roundContainer, 'temp-el')) ||
-                (this.autoCompleteButton &&
-                  roundContainer.children.length === 0)
+                this.allChildrenHaveClass(roundContainer, 'temp-el') ||
+                roundContainer.children.length === 0
               ) {
-                continueButton.classList.remove('disabled2')
-                continueButton.classList.add('continue')
-                this.autoCompleteButton.classList.remove('disabled2')
-                this.autoCompleteButton.classList.add('continue')
+                this.continueButton?.classList.remove('disabled2')
+                this.continueButton?.classList.add('continue')
+                this.autoCompleteButton?.classList.remove('disabled2')
+                this.autoCompleteButton?.classList.add('continue')
                 continueButton.textContent = 'Check'
-              } else if (this.autoCompleteButton) {
-                continueButton.classList.remove('continue')
-                continueButton.classList.add('disabled2')
-                this.autoCompleteButton.classList.remove('continue')
-                this.autoCompleteButton.classList.add('disabled2')
+              } else {
+                this.autoCompleteButton?.classList.remove('continue')
+                this.autoCompleteButton?.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             } else {
@@ -255,8 +276,6 @@ export class Game {
               } else if (this.autoCompleteButton) {
                 continueButton.classList.remove('continue')
                 continueButton.classList.add('disabled2')
-                this.autoCompleteButton.classList.remove('continue')
-                this.autoCompleteButton.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             }
@@ -293,8 +312,6 @@ export class Game {
               } else if (this.autoCompleteButton) {
                 continueButton.classList.remove('continue')
                 continueButton.classList.add('disabled2')
-                this.autoCompleteButton.classList.remove('continue')
-                this.autoCompleteButton.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             } else {
@@ -323,8 +340,6 @@ export class Game {
               } else if (this.autoCompleteButton) {
                 continueButton.classList.remove('continue')
                 continueButton.classList.add('disabled2')
-                this.autoCompleteButton.classList.remove('continue')
-                this.autoCompleteButton.classList.add('disabled2')
                 continueButton.textContent = 'Check'
               }
             }
@@ -341,6 +356,7 @@ export class Game {
 
   logout = () => {
     localStorage.removeItem('catPuzzleUser')
+    localStorage.removeItem('catPuzzleUserData')
     if (this.gameArea && this.header) {
       this.gameArea.remove()
       this.header.remove()
@@ -363,7 +379,7 @@ export class Game {
   }
 
   insertElBeforeTempEl(
-    container: HTMLElement,
+    container: HTMLElement | ParentNode,
     elWidth: string,
     el: HTMLElement,
   ) {
@@ -396,6 +412,90 @@ export class Game {
       }
     }
   }
+
+  insertElAfterTempEl(
+    container: HTMLElement | ParentNode,
+    elWidth: string,
+    el: HTMLElement,
+  ) {
+    for (let i = 0; i < container.children.length; i++) {
+      const child = container.children[i]
+      if (child instanceof HTMLElement) {
+        if (
+          child.classList.contains('temp-el')
+          // &&        child.style.width === elWidth
+        ) {
+          container.insertBefore(el, child.nextSibling)
+
+          const tempElWidth = child.style.width
+          container.removeChild(child)
+          for (let i = 0; i < container.children.length; i++) {
+            const child = container.children[i]
+            if (
+              child instanceof HTMLElement &&
+              child.style.width === elWidth &&
+              child.classList.contains('temp-el')
+            ) {
+              child.style.width = tempElWidth
+            }
+            break
+          }
+        } else {
+          container.append(el)
+        }
+      }
+    }
+  }
+
+  insertElAfterDropzoneAndRemoveDuplicate(
+    container: HTMLElement | ParentNode,
+    elWidth: string,
+    el: HTMLElement,
+    dropzone: HTMLElement,
+  ) {
+    // Insert the new element after the dropzone
+    container.insertBefore(el, dropzone.nextSibling)
+
+    // Remove any existing element with the same width
+    for (let i = 0; i < container.children.length; i++) {
+      const child = container.children[i]
+      if (
+        child instanceof HTMLElement &&
+        child.style.width === elWidth &&
+        child.classList.contains('temp-el')
+      ) {
+        child.remove() // Remove the element with the same width
+        i-- // Adjust the index since the list size has changed
+      }
+    }
+  }
+
+  insertElBeforeDropzoneAndRemoveDuplicate(
+    container: HTMLElement | ParentNode,
+    elWidth: string,
+    el: HTMLElement,
+    dropzone: HTMLElement,
+  ) {
+    container.insertBefore(el, dropzone)
+    const tempWidth = dropzone.style.width
+    if (dropzone.classList.contains('temp-el')) {
+      dropzone.remove()
+    }
+
+    for (let i = 0; i < container.children.length; i++) {
+      const child = container.children[i]
+      if (
+        child instanceof HTMLElement &&
+        child.style.width === elWidth &&
+        child.classList.contains('temp-el')
+      ) {
+        child.style.width = tempWidth
+        i-- // Adjust the index since the list size has changed
+      }
+      break
+    }
+  }
+
   createTemp(elWidth: string, elHeight: string): HTMLElement {
     const tempEl = createElement('div', 'temp-el')
     tempEl.style.width = elWidth
@@ -413,36 +513,19 @@ export class Game {
         const dropzone = e.target
 
         if (draggableElement && dropzone && draggableElement.parentElement) {
-          const dropzoneRect = dropzone.getBoundingClientRect()
-          const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
-          const draggableElementRect = draggableElement.getBoundingClientRect()
-          const draggableElementCenterY =
-            draggableElementRect.top + draggableElementRect.height / 2
-            const lineData =
-                draggableElement.parentElement.getAttribute('data-line')
-          if (dropzone.parentNode && state.lineNumber === Number(lineData) ) {
-          if (draggableElementCenterY < dropzoneCenterY ) {
-            dropzone.parentNode.insertBefore(draggableElement, dropzone)
-              } if( draggableElementCenterY > dropzoneCenterY)  {
-            dropzone.parentNode.insertBefore(
+          const lineData = draggableElement.getAttribute('data-line')
+          if (dropzone.parentNode && state.lineNumber === Number(lineData)) {
+            const dragWidth = draggableElement.style.width
+            this.insertElBeforeDropzoneAndRemoveDuplicate(
+              dropzone.parentNode,
+              dragWidth,
               draggableElement,
-              dropzone.nextSibling,
+              dropzone,
             )
+            this.verifyChildrenLength()
           }
-          const allTempEl = Array.from(document.querySelectorAll('.temp-el'))
-          allTempEl.map((el) => {
-            if (el instanceof HTMLElement) {
-              if (el.style.width === draggableElement.style.width) {
-                el.parentNode?.removeChild(el)
-              }
-            }
-          
-          })
-
-          //TODO добавить логику удаления временных элементов
         }
       }
-    }
     })
     tempEl.addEventListener('dragover', (e) => {
       e.preventDefault()
@@ -453,16 +536,14 @@ export class Game {
     return tempEl
   }
   verifyLine(target: HTMLElement, button: HTMLElement): void {
-    const childrenArray = Array.from(target.children)
-    const idsAfterDash = childrenArray.map((el) => {
-      const id = el.id
-      const parts = id.split('-')
-      return parseInt(parts[1], 10)
-    })
-
     let isOrderCorrect = true
-    for (let i = 0; i < idsAfterDash.length - 1; i++) {
-      if (idsAfterDash[i] > idsAfterDash[i + 1]) {
+
+    if (this.roundContainer) {
+      const childrenArray1 = Array.from(this.roundContainer.children)
+      if (
+        this.roundContainer.children.length > 0 &&
+        childrenArray1.every((child) => !child.classList.contains('temp-el'))
+      ) {
         isOrderCorrect = false
         button.textContent = 'Check'
         button.classList.add('disabled2')
@@ -470,46 +551,80 @@ export class Game {
         if (this.audio) {
           this.audio.src = 'error.mp3'
           this.audio.play()
-          }
-        break
-        //TODO подсветить ошибки
+        }
+        return
       }
-    
-    }
-
-    if (isOrderCorrect) {
-      button.textContent = 'Continue'
-      button.classList.add('continue')
-      button.classList.remove('disabled2')
-      target.style.border = '2px solid green'
-      childrenArray.forEach((child) => {
-        if (child instanceof HTMLElement) {
-          child.style.backgroundImage = state.backgroundUrl
-          const backgroundPosition = child.getAttribute('background-position')
-          if (backgroundPosition !== null) {
-            child.style.background = state.backgroundUrl
-            child.style.backgroundPosition = backgroundPosition
-          }
-        }
+      const childrenArray = Array.from(target.children)
+      const idsAfterDash = childrenArray.map((el) => {
+        const id = el.id
+        const parts = id.split('-')
+        return parseInt(parts[1], 10)
       })
-      if (this.audio) {
-        this.audio.src = 'solution.wav'
-        this.audio.play()
+
+      for (let i = 0; i < idsAfterDash.length - 1; i++) {
+        if (idsAfterDash[i] > idsAfterDash[i + 1]) {
+          isOrderCorrect = false
+          button.textContent = 'Check'
+          button.classList.add('disabled2')
+          target.style.border = '2px solid red'
+          if (this.audio) {
+            this.audio.src = 'error.mp3'
+            this.audio.play()
+          }
+          break
+          //TODO подсветить ошибки
         }
+      }
+
+      if (isOrderCorrect) {
+        button.textContent = 'Continue'
+        button.classList.add('continue')
+        button.classList.remove('disabled2')
+        target.style.border = '2px solid green'
+        childrenArray.forEach((child) => {
+          if (child instanceof HTMLElement) {
+            child.style.backgroundImage = state.backgroundUrl
+            const backgroundPosition = child.getAttribute('background-position')
+            if (backgroundPosition !== null) {
+              child.style.background = state.backgroundUrl
+              child.style.backgroundPosition = backgroundPosition
+            }
+          }
+        })
+        if (this.audio) {
+          this.audio.src = 'solution.wav'
+          this.audio.play()
+        }
+        if (state.lineNumber === 10) {
+          this.roundArrays?.forEach((el) => {
+            el.forEach((item) => {
+              item.style.border = `0px solid rgba(0, 0, 0, 0)`
+              item.style.boxShadow = '0px 0px 0px rgba(0, 0, 0, 0)'
+              item.textContent = ''
+            })
+          })
+          if (this.translationContainer && this.level) {
+            this.translationContainer.style.visibility = 'visible'
+            this.translationContainer.textContent =
+              this.level.transformedData[state.round - 1].name +
+              ', ' +
+              this.level.transformedData[state.round - 1].author +
+              ', ' +
+              this.level.transformedData[state.round - 1].year
+          }
+          target.style.border = ''
+        }
+      }
     }
   }
-  continue = (
-    lineNumber: number,
-    round: number,
-    level: number,
-  ): void => {
+  continue = (lineNumber: number, round: number, level: number): void => {
     if (lineNumber <= 9) {
       state.lineNumber += 1
       this.updateLine()
       if (this.audio) {
         this.audio.src = 'Collapse.mp3'
         this.audio.play()
-        }
+      }
     } else if (
       lineNumber > 9 &&
       round < state.roundsCount &&
@@ -517,50 +632,48 @@ export class Game {
       this.level
     ) {
       if (this.header.roundSelect) {
-      this.header.changeOptionColor(this.header.roundSelect, state.round)
+        this.header.changeOptionColor(this.header.roundSelect, state.round)
       }
       state.round += 1
-      
+      state.lineNumber = 1
+
       this.updateRound()
       if (this.audio) {
+        this.audio.pause()
         this.audio.src = 'newround2.mp3'
         this.audio.play()
-        }
+      }
     } else if (round === state.roundsCount && level <= 5) {
-      
       if (this.header.roundSelect) {
         this.header.changeOptionColor(this.header.roundSelect, state.round)
-        }
-        if (this.header.levelSelect) {
-          this.header.changeOptionColor(this.header.levelSelect, state.level)
-          }
-          state.level += 1
+      }
+      if (this.header.levelSelect) {
+        this.header.changeOptionColor(this.header.levelSelect, state.level)
+      }
+      state.level += 1
+      state.round = 1
       this.updateLevel()
-     
     } else {
-      console.log('You won')
+      if (this.header.roundSelect) {
+        this.header.changeOptionColor(this.header.roundSelect, state.round)
+      }
+      if (this.header.levelSelect) {
+        this.header.changeOptionColor(this.header.levelSelect, state.level)
+      }
+      state.level = 1
+      this.updateLevel()
     }
   }
   backgroundTipOn = (): void => {
-    const target = document.getElementById(state.lineNumber.toString())
-    if (target) {
-      const childrenArray = Array.from(target.children)
+    const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
+    const target1 = Array.from(document.querySelectorAll(selector))
 
-      const allChildrenHavePictureBackground = childrenArray.every((child) => {
-        return (
-          child instanceof HTMLElement &&
-          child.style.backgroundImage === state.backgroundUrl
-            )
-      })
-      const allChildrenHaveBrownBackground = childrenArray.every((child) => {
-        return (
-          child instanceof HTMLElement &&
-          child.style.backgroundImage === `url("brown-background.jpg")`
-        )
-      })
+    const childrenArray = target1
 
-      if (allChildrenHavePictureBackground && this.header.backgroundTip instanceof HTMLImageElement) {
-        this.header.backgroundTip.src ='backgroundTipDis.png'
+    if (this.header.backgroundTip instanceof HTMLImageElement) {
+      if (state.backgroundTip) {
+        this.header.backgroundTip.src = 'backgroundTipDis.png'
+        state.backgroundTip = false
         childrenArray.forEach((child) => {
           if (
             child instanceof HTMLElement &&
@@ -569,8 +682,9 @@ export class Game {
             child.style.backgroundImage = `url("brown-background.jpg")`
           }
         })
-      } else if (allChildrenHaveBrownBackground && this.header.backgroundTip instanceof HTMLImageElement) {
+      } else {
         this.header.backgroundTip.src = 'backgroundTip1.png'
+        state.backgroundTip = true
         childrenArray.forEach((child) => {
           if (
             child instanceof HTMLElement &&
@@ -580,16 +694,7 @@ export class Game {
             if (this.audio) {
               this.audio.src = 'zviak.mp3'
               this.audio.play()
-              }
-          }
-        })
-      } else {
-        childrenArray.forEach((child) => {
-          if (
-            child instanceof HTMLElement &&
-            !child.classList.contains('temp-el')
-          ) {
-            child.style.backgroundImage = `url('brown-background.jpg')`
+            }
           }
         })
       }
@@ -598,36 +703,44 @@ export class Game {
   audioTipOn = (): void => {
     if (this.audio) {
       this.audio.src = state.audioSrc
-       this.audio.play();
-       if (this.header.audioTip && this.header.audioTip instanceof HTMLImageElement) {
-       this.header.audioTip.src = 'audioTipDis.png'
+      this.audio.play()
+      if (
+        this.header.audioTip &&
+        this.header.audioTip instanceof HTMLImageElement
+      ) {
+        this.header.audioTip.src = 'audioTipDis.png'
 
-       this.audio.addEventListener('ended', () => {
-        if (this.header.audioTip && this.header.audioTip instanceof HTMLImageElement) {
-        this.header.audioTip.src = 'audioTip1.png'
-        }
-       });
+        this.audio.addEventListener('ended', () => {
+          if (
+            this.header.audioTip &&
+            this.header.audioTip instanceof HTMLImageElement
+          ) {
+            this.header.audioTip.src = 'audioTip1.png'
+          }
+        })
       }
     }
-   }
+  }
 
   translationTipOn = (): void => {
-    if (this.translationContainer && this.header.translationTip instanceof HTMLImageElement) {
+    if (
+      this.translationContainer &&
+      this.header.translationTip instanceof HTMLImageElement
+    ) {
       if (this.translationContainer.style.visibility === 'hidden') {
         this.translationContainer.style.visibility = 'visible'
         this.header.translationTip.src = 'translationTip1.png'
         if (this.audio) {
           this.audio.src = 'dzing.mp3'
           this.audio.play()
-          }
-        
+        }
       } else {
         this.translationContainer.style.visibility = 'hidden'
         this.header.translationTip.src = 'translationTipDis.png'
         if (this.audio) {
           this.audio.src = 'dzing.mp3'
           this.audio.play()
-          }
+        }
       }
     }
   }
@@ -636,24 +749,27 @@ export class Game {
     this.level = useLevelData
     state.roundsCount = this.level.roundsCount
     this.header.createRoundSelect()
-    
   }
 
   updateLine(): void {
-    if (this.translationContainer && this.level && this.continueButton && this.audio) {
+    if (
+      this.translationContainer &&
+      this.level &&
+      this.continueButton &&
+      this.audio
+    ) {
       state.audioSrc = `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
       //`${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
-     
+
       this.audio.src = state.audioSrc
       state.translation = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
       this.translationContainer.textContent = state.translation
       this.continueButton.classList.add('disabled2')
       this.continueButton.classList.remove('continue')
-      this.autoCompleteButton?.classList.add('disabled2')
-      this.autoCompleteButton?.classList.remove('continue')
+      this.autoCompleteButton?.classList.remove('disabled2')
+      this.autoCompleteButton?.classList.add('continue')
       this.continueButton.textContent = 'Check'
-    
-  }
+    }
 
     if (this.roundArrays && this.roundContainer && this.continueButton) {
       this.startGame(
@@ -662,24 +778,31 @@ export class Game {
         state.lineNumber,
         this.continueButton,
       )
+
       const target = document.getElementById(state.lineNumber.toString())
       if (target) {
         target.style.border = ''
       }
     }
-    if (this.header.backgroundTip && this.header.backgroundTip instanceof HTMLImageElement) {
-      this.header.backgroundTip.src = 'backgroundTipDis.png'
-    } 
-    if ( this.header.translationTip && this.header.translationTip instanceof HTMLImageElement && this.translationContainer) {
-      this.header.translationTip.src = 'translationTipDis.png'
-      this.translationContainer.style.visibility = 'hidden'
+    if (
+      this.header.backgroundTip &&
+      this.header.backgroundTip instanceof HTMLImageElement
+    ) {
+      this.header.backgroundTip.src = 'backgroundTip1.png'
     }
-    
-    
+    if (
+      this.header.translationTip &&
+      this.header.translationTip instanceof HTMLImageElement &&
+      this.translationContainer
+    ) {
+      this.header.translationTip.src = 'translationTip1.png'
+      this.translationContainer.style.visibility = 'visible'
+    }
+    this.userData.lineNumber = state.lineNumber
+    this.saveUserData()
   }
 
   updateRound(): void {
-    state.lineNumber = 1
     if (this.level) {
       this.roundArrays = []
 
@@ -690,14 +813,14 @@ export class Game {
       if (this.roundContainer && this.picture) {
         this.picture.innerHTML = ''
         this.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
-        this.picture.style.backgroundBlendMode = `saturation`;
+        this.picture.style.backgroundBlendMode = `saturation`
         createImagePieces(
           this.picture,
           this.roundContainer,
-          state.lineNumber,
           this.roundArrays,
           this.array,
         )
+
         this.updateLine()
       }
       if (this.header.roundSelect)
@@ -706,26 +829,38 @@ export class Game {
     if (this.audio) {
       this.audio.src = 'newround2.mp3'
       this.audio.play()
-      }
+    }
+    this.userData.round = state.round
+    this.saveUserData()
   }
 
   async updateLevel() {
-    state.round = 1
-    console.log('state round', state.round)
     await this.useLevelData()
     this.updateRound()
     if (this.header.levelSelect) {
       this.header.levelSelect.value = `${state.level}`
     }
     if (this.audio) {
-      this.audio.src = 'newlevel.mp3'
-      this.audio.play()
+      const newTrack = 'newlevel.mp3'
+      if (this.audio) {
+        this.audio.pause()
+        this.audio.src = newTrack
+        this.audio.play()
       }
+    }
+
+    this.userData.level = state.level
+    this.saveUserData()
+    this.userData.autocomplete = false
   }
 
   roundSelect = () => {
     if (this.header.roundSelect) {
       state.round = Number(this.header.roundSelect.value)
+      state.lineNumber = 1
+      this.userData.round = state.round
+      this.userData.lineNumber = state.lineNumber
+      this.saveUserData()
       this.updateRound()
     }
   }
@@ -733,9 +868,54 @@ export class Game {
   levelSelect = () => {
     if (this.header.levelSelect) {
       state.level = Number(this.header.levelSelect.value)
-     
-      console.log('state level', state.level)
+      state.round = 1
+      state.lineNumber = 1
+      this.userData.level = state.level
+      this.userData.round = state.round
+      this.userData.lineNumber = state.lineNumber
+      this.saveUserData()
       this.updateLevel()
     }
   }
+
+  verifyChildrenLength() {
+    if (this.roundContainer && this.continueButton && this.autoCompleteButton) {
+      if (
+        this.allChildrenHaveClass(this.roundContainer, 'temp-el') ||
+        this.roundContainer.children.length === 0
+      ) {
+        this.continueButton.classList.remove('disabled2')
+        this.continueButton.classList.add('continue')
+        //  this.autoCompleteButton.classList.remove('disabled2')
+        //  this.autoCompleteButton.classList.add('continue')
+      } else {
+        this.continueButton.classList.remove('continue')
+        this.continueButton.classList.add('disabled2')
+        //  this.autoCompleteButton.classList.add('disabled2')
+        //  this.autoCompleteButton.classList.remove('continue')
+      }
+    }
+  }
+
+  async getSavedUserData() {
+    const savedUserData = localStorage.getItem('catPuzzleUserData')
+    if (savedUserData) {
+      this.userData = JSON.parse(savedUserData)
+      state.level = this.userData.level
+      state.round = this.userData.round
+
+      state.lineNumber = this.userData.lineNumber
+
+      this.init()
+    }
+  }
+  saveUserData() {
+    localStorage.setItem('catPuzzleUserData', JSON.stringify(this.userData))
+  }
+}
+type UserData = {
+  lineNumber: number
+  round: number
+  level: number
+  autocomplete: Boolean
 }

@@ -52,7 +52,6 @@ a:hover {
   gap: 0px;
 }
 
-
 .round-container {
   position: relative;
   display: flex;
@@ -72,6 +71,7 @@ a:hover {
   font-size: 20px;
   font-weight: 600;
   text-align: left;
+  background: rgba(247, 236, 218, 0.6);
 }
 
 .line-container {
@@ -81,7 +81,8 @@ a:hover {
   width: 100%;
 }
 
-.temp-el {}
+.temp-el {
+}
 
 .image-piece {
   display: flex;

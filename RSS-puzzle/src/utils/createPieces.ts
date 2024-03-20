@@ -4,7 +4,6 @@ import { createElement } from './createElement'
 export function createImagePieces(
   container: HTMLElement,
   roundContainer: HTMLElement,
-  curLineNumber: number,
   roundArrays: HTMLElement[][],
   list: ImagePieceData[],
   backgroundImageUrl: string = 'brown-background.jpg',
@@ -16,7 +15,7 @@ export function createImagePieces(
   if (pictureElement instanceof HTMLElement) {
     const pictureWidth = pictureElement.offsetWidth
     const pictureHeight = pictureElement.offsetHeight
-    const fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment()
 
     list.forEach((item, index) => {
       const lineNumber: number = index + 1
@@ -53,9 +52,8 @@ export function createImagePieces(
           'background-position',
           piece.style.backgroundPosition,
         )
-        fragment.appendChild(piece);
+        fragment.appendChild(piece)
         //lineContainer.append(piece)
-        
 
         piece.addEventListener('dragstart', function (e) {
           if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
@@ -63,21 +61,62 @@ export function createImagePieces(
           }
         })
 
-        lineContainer.addEventListener('drop', (e) => {
+        lineContainer.addEventListener('drop', (e): void => {
           e.preventDefault()
           if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
             const id = e.dataTransfer.getData('text')
             const draggableElement = document.getElementById(id)
             const dropzone = e.target
-            const lineData = dropzone.getAttribute('data-line') // если это правильная строка
-            if (draggableElement) {
-              const lineDataDrag = draggableElement.getAttribute('data-line') //если это элемент из правильной строки
+            // если это правильная строка
+            if (
+              draggableElement &&
+              dropzone &&
+              draggableElement.parentElement &&
+              dropzone.parentElement
+            ) {
+              const dropzoneRect = dropzone.getBoundingClientRect()
+              const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
+              const draggableElementRect =
+                draggableElement.getBoundingClientRect()
+              const draggableElementCenterY =
+                draggableElementRect.top + draggableElementRect.height / 2
+              const lineData = draggableElement.getAttribute('data-line')
+              const lineData1 = dropzone.getAttribute('data-line')
+
               if (
-                curLineNumber === Number(lineData) &&
                 dropzone.classList.contains('line-container') &&
-                curLineNumber === Number(lineDataDrag)
+                state.lineNumber === Number(lineData)
               ) {
                 dropzone.append(draggableElement)
+                verifyChildrenLength()
+              } else if (
+                state.lineNumber === Number(lineData) &&
+                lineData === lineData1 &&
+                draggableElementCenterY < dropzoneCenterY
+              ) {
+                //  lineContainer.insertBefore(draggableElement, dropzone)
+                insertElBeforeDropzoneAndRemoveDuplicate(
+                  lineContainer,
+                  draggableElement.style.width,
+                  draggableElement,
+                  dropzone,
+                )
+                verifyChildrenLength()
+              } else if (
+                state.lineNumber === Number(lineData) &&
+                lineData === lineData1 &&
+                draggableElementCenterY > dropzoneCenterY
+              ) {
+                /*  lineContainer.insertBefore(
+                  draggableElement,
+                  dropzone.nextSibling,
+                )*/
+                insertElAfterDropzoneAndRemoveDuplicate(
+                  lineContainer,
+                  draggableElement.style.width,
+                  draggableElement,
+                  dropzone,
+                )
                 verifyChildrenLength()
               }
             }
@@ -90,15 +129,50 @@ export function createImagePieces(
             const draggableElement = document.getElementById(id)
             const dropzone = e.target
             if (draggableElement && draggableElement.parentElement) {
-              const lineData =
-                draggableElement.parentElement.getAttribute('data-line')
+              const dropzoneRect = dropzone.getBoundingClientRect()
+              const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
+              const draggableElementRect =
+                draggableElement.getBoundingClientRect()
+              const draggableElementCenterY =
+                draggableElementRect.top + draggableElementRect.height / 2
+              const lineData = draggableElement.getAttribute('data-line')
+              const lineData1 = dropzone.getAttribute('data-line')
 
               if (
                 state.lineNumber === Number(lineData) &&
                 dropzone.classList.contains('round-container')
               ) {
-                console.log('Julia')
                 dropzone.append(draggableElement)
+                verifyChildrenLength()
+              } else if (
+                state.lineNumber === Number(lineData) &&
+                lineData === lineData1 &&
+                draggableElementCenterY < dropzoneCenterY
+              ) {
+                //    lineContainer.insertBefore(draggableElement, dropzone)
+                insertElBeforeDropzoneAndRemoveDuplicate(
+                  lineContainer,
+                  draggableElement.style.width,
+                  draggableElement,
+                  dropzone,
+                )
+                verifyChildrenLength()
+              } else if (
+                state.lineNumber === Number(lineData) &&
+                lineData === lineData1 &&
+                draggableElementCenterY > dropzoneCenterY
+              ) {
+                /*  lineContainer.insertBefore(
+                  draggableElement,
+                  dropzone.nextSibling,
+                )*/
+                insertElAfterDropzoneAndRemoveDuplicate(
+                  lineContainer,
+                  draggableElement.style.width,
+                  draggableElement,
+                  dropzone,
+                )
+                verifyChildrenLength()
               }
             }
           }
@@ -109,27 +183,36 @@ export function createImagePieces(
             const id = e.dataTransfer.getData('text')
             const draggableElement = document.getElementById(id)
             const dropzone = e.target
-           
-           
-            if (draggableElement && dropzone && draggableElement.parentElement && dropzone.parentElement) {
+
+            if (
+              draggableElement &&
+              dropzone &&
+              draggableElement.parentElement &&
+              dropzone.parentElement
+            ) {
               const dropzoneRect = dropzone.getBoundingClientRect()
               const dropzoneCenterY = dropzoneRect.top + dropzoneRect.height / 2
               const draggableElementRect =
                 draggableElement.getBoundingClientRect()
               const draggableElementCenterY =
                 draggableElementRect.top + draggableElementRect.height / 2
-                const lineData = draggableElement.parentElement.getAttribute('data-line')
-                const lineData1 = dropzone.parentElement.getAttribute('data-line')
+              const lineData = draggableElement.getAttribute('data-line')
+              const lineData1 = dropzone.getAttribute('data-line')
               if (lineData === lineData1 && dropzone.parentNode) {
-                
-               console.log((Number(lineData)) )
                 if (draggableElementCenterY < dropzoneCenterY) {
-                  dropzone.parentNode.insertBefore(draggableElement, dropzone)
+                  insertElBeforeDropzoneAndRemoveDuplicate(
+                    dropzone.parentNode,
+                    draggableElement.style.width,
+                    draggableElement,
+                    dropzone,
+                  )
                   verifyChildrenLength()
                 } else {
-                  dropzone.parentNode.insertBefore(
+                  insertElAfterDropzoneAndRemoveDuplicate(
+                    dropzone.parentNode,
+                    draggableElement.style.width,
                     draggableElement,
-                    dropzone.nextSibling,
+                    dropzone,
                   )
                   verifyChildrenLength()
                 }
@@ -149,13 +232,11 @@ export function createImagePieces(
             e.dataTransfer.dropEffect = 'move'
           }
         })
-        
 
         x += widthRatio * item.letters[i].length
-        lineContainer.append(fragment);
+        lineContainer.append(fragment)
 
         if (container) {
-          
           container.append(lineContainer)
           lineContainer.style.display = 'none'
         }
@@ -174,53 +255,24 @@ export interface ImagePieceData {
   letters: string[]
 }
 
-/*function swapWidths(a: HTMLElement, b: HTMLElement) {
-  if (a.parentNode === b.parentNode && a !== b) {
-    const tempWidth = a.style.width
-    a.style.width = b.style.width
-    b.style.width = tempWidth
-  }
-}
-function findNextRenderedElement(currentElement: HTMLElement, roundArrays: HTMLElement[][], id: number): HTMLElement {
-  const elements = roundArrays[id-1];
-  console.log(elements);
-  let nextElement;
-  let minDifference = Infinity;
- 
-  if (elements) {
-     console.log('yes');
-     elements.forEach(element => {
-       if (element !== currentElement) {
-         const rect = element.getBoundingClientRect();
-         const currentRect = currentElement.getBoundingClientRect();
-          const difference = rect.left - currentRect.left;
- 
-         // Ensure the next element is to the right of the current element
-         if (difference > 0 && difference < minDifference) {
-           minDifference = difference;
-           nextElement = element;
-           console.log(element.textContent)
-         }
-       }
-     });
-  }
-
-  return nextElement;
- }*/
-
 export function verifyChildrenLength() {
   const button = document.getElementById('check')
+  const autoCompleteButton = document.getElementById('autocomplete')
   const roundContainer = document.getElementById('round-container')
-  if (roundContainer && button) {
+  if (roundContainer && button && autoCompleteButton) {
     if (
       allChildrenHaveClass(roundContainer, 'temp-el') ||
       roundContainer.children.length === 0
     ) {
       button.classList.remove('disabled2')
       button.classList.add('continue')
+      autoCompleteButton.classList.remove('disabled2')
+      autoCompleteButton.classList.add('continue')
     } else {
       button.classList.remove('continue')
       button.classList.add('disabled2')
+      autoCompleteButton.classList.remove('continue')
+      autoCompleteButton.classList.add('disabled2')
     }
   }
 }
@@ -236,25 +288,120 @@ export function allChildrenHaveClass(
   }
   return true
 }
+export function insertElBeforeTempEl(
+  container: HTMLElement | ParentNode,
+  elWidth: string,
+  el: HTMLElement,
+) {
+  for (let i = 0; i < container.children.length; i++) {
+    const child = container.children[i]
+    if (child instanceof HTMLElement) {
+      if (
+        child.classList.contains('temp-el')
+        // &&        child.style.width === elWidth
+      ) {
+        container.insertBefore(el, child)
 
-/*const array1: { pieces: number; letters: string[] }[] = [
-  {
-    pieces: 8,
-    letters: 'The students agree they have too much homework'.split(' '),
-  },
-  { pieces: 7, letters: 'They arrived at school at 7 a.m'.split(' ') },
-  { pieces: 5, letters: 'Is your birthday in August?'.split(' ') },
-  { pieces: 8, letters: 'There is a small boat on the lake'.split(' ') },
-  { pieces: 5, letters: 'I ate eggs for breakfast'.split(' ') },
-  { pieces: 7, letters: 'I brought my camera on my vacation'.split(' ') },
-  {
-    pieces: 9,
-    letters: 'The capital of the United States is Washington, D.C'.split(' '),
-  },
-  {
-    pieces: 9,
-    letters: 'Did you catch the ball during the baseball game?'.split(' '),
-  },
-  { pieces: 6, letters: 'People feed ducks at the lake'.split(' ') },
-  { pieces: 6, letters: 'The woman enjoys riding her bicycle'.split(' ') },
-]*/
+        const tempElWidth = child.style.width
+        container.removeChild(child)
+        for (let i = 0; i < container.children.length; i++) {
+          const child = container.children[i]
+          if (child instanceof HTMLElement) {
+            if (
+              child.classList.contains('temp-el') &&
+              child.style.width === elWidth
+            ) {
+              child.style.width = tempElWidth
+            }
+          }
+        }
+        break
+      } else {
+        container.append(el)
+      }
+    }
+  }
+}
+
+export function insertElAfterTempEl(
+  container: HTMLElement | ParentNode,
+  elWidth: string,
+  el: HTMLElement,
+) {
+  for (let i = 0; i < container.children.length; i++) {
+    const child = container.children[i]
+    if (child instanceof HTMLElement) {
+      if (
+        child.classList.contains('temp-el')
+        // &&        child.style.width === elWidth
+      ) {
+        container.insertBefore(el, child.nextSibling)
+
+        const tempElWidth = child.style.width
+        container.removeChild(child)
+        for (let i = 0; i < container.children.length; i++) {
+          const child = container.children[i]
+          if (
+            child instanceof HTMLElement &&
+            child.style.width === elWidth &&
+            child.classList.contains('temp-el')
+          ) {
+            child.style.width = tempElWidth
+          }
+        }
+        break
+      } else {
+        container.append(el)
+      }
+    }
+  }
+}
+function insertElAfterDropzoneAndRemoveDuplicate(
+  container: HTMLElement | ParentNode,
+  elWidth: string,
+  el: HTMLElement,
+  dropzone: HTMLElement,
+) {
+  container.insertBefore(el, dropzone.nextSibling)
+
+  for (let i = 0; i < container.children.length; i++) {
+    const child = container.children[i]
+    if (
+      child instanceof HTMLElement &&
+      child.style.width === elWidth &&
+      child.classList.contains('temp-el')
+    ) {
+      child.remove()
+      i--
+
+      break
+    }
+  }
+}
+
+function insertElBeforeDropzoneAndRemoveDuplicate(
+  container: HTMLElement | ParentNode,
+  elWidth: string,
+  el: HTMLElement,
+  dropzone: HTMLElement,
+) {
+  container.insertBefore(el, dropzone)
+  const tempWidth = dropzone.style.width
+  if (dropzone.classList.contains('temp-el')) {
+    dropzone.remove()
+  }
+
+  for (let i = 0; i < container.children.length; i++) {
+    const child = container.children[i]
+    if (
+      child instanceof HTMLElement &&
+      child.style.width === elWidth &&
+      child.classList.contains('temp-el')
+    ) {
+      child.style.width = tempWidth
+
+      i--
+      break
+    }
+  }
+}
