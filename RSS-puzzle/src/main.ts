@@ -16,6 +16,7 @@ export const state = {
   translationTip: true,
   audioTip: true,
   backgroundTip: true,
+  autocomplete: false,
 }
 
 if (catPuzzleUserData) {

@@ -1,6 +1,6 @@
 import { createElement } from '../utils/createElement'
 //import { Music } from '../utils/Music'
-const button = 'button.mp3'
+const button = 'newround.mp3'
 
 export class Stats {
   overlay: HTMLElement | null
@@ -13,6 +13,12 @@ export class Stats {
   audio: HTMLAudioElement
   statsContent: HTMLDivElement | undefined
   statsButton: HTMLButtonElement | undefined
+  miniPicture: HTMLDivElement  | undefined
+  dataContainer: HTMLDivElement | undefined
+  completedLinesTitle: HTMLDivElement | undefined
+  helpedLinesTitle: HTMLDivElement | undefined
+  completedLinesTitleContent: HTMLDivElement | undefined
+  helpedLinesTitleContent: HTMLDivElement | undefined
 
   constructor(section: HTMLElement) {
     this.overlay = null
@@ -35,6 +41,12 @@ export class Stats {
     this.stats = createElement('div', `modal0`)
     this.statsContent = createElement('div', 'modal-content')
     this.title = createElement('div', 'title', title)
+    this.miniPicture =  createElement('div', 'mini-picture')
+    this.dataContainer = createElement('div', 'data-container')
+    this.completedLinesTitle =  createElement('div', 'line', 'Lines completed without help')
+    this.completedLinesTitleContent =  createElement('div', 'line-content')
+    this.helpedLinesTitle =  createElement('div', 'line', 'Lines completed with help')
+    this.helpedLinesTitleContent =  createElement('div', 'line-content')
     this.message = createElement('div', 'rules', message)
     this.statsButton = createElement(
       'button',
@@ -43,16 +55,20 @@ export class Stats {
     )
     this.statsButton.addEventListener('click', () => {
       this.audio.src = button
+      this.audio.volume = 0,3
       this.audio.play()
       this.remove()
     })
 
     this.stats.append(this.statsContent)
-    this.statsContent.append(this.title, this.message, this.statsButton)
+    this.dataContainer.append(this.completedLinesTitle, this.helpedLinesTitle)
+    this.completedLinesTitle.append(this.completedLinesTitleContent)
+    this.helpedLinesTitle.append(this.helpedLinesTitleContent)
+    this.statsContent.append(this.title, this.miniPicture, this.message, this.dataContainer, this.statsButton)
     this.section.append(this.stats)
   }
 
-  showModal(title: string, message: string) {
+  showStats(title: string, message: string) {
     this.isShown = true
     this.create(title, message)
     document.addEventListener('keydown', this.handleEnter)

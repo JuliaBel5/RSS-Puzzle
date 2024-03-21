@@ -52,6 +52,13 @@ a:hover {
   gap: 0px;
 }
 
+@media screen and (max-width: 1000px) {
+  .picture {
+    width: 750px;
+    height: 421.5px;
+  }
+}
+
 .round-container {
   position: relative;
   display: flex;
@@ -64,7 +71,15 @@ a:hover {
   font-size: 16px;
 }
 
+@media screen and (max-width: 1000px) {
+  .round-container {
+    width: 750px;
+    height: 45px;
+  }
+}
+
 .translation-container {
+  margin-top: 20px;
   display: inline-block;
   height: 50px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -81,8 +96,7 @@ a:hover {
   width: 100%;
 }
 
-.temp-el {
-}
+.temp-el {}
 
 .image-piece {
   display: flex;
@@ -91,7 +105,7 @@ a:hover {
   margin: 0;
   position: relative;
   text-align: center;
-  color: white;
+  color: rgb(242, 240, 225);
   font-weight: 600;
   width: 100px;
   height: 75px;
