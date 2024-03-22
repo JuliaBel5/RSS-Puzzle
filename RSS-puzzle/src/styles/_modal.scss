@@ -14,8 +14,31 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 700px;
+  width: 750px;
   min-height: 300px;
+  overflow: auto;
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  border: 2px solid $modalBorderPink;
+  border-radius: 15px;
+  gap: 20px;
+  z-index: 15;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 2;
+  border-radius: 10px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 750px;
+  min-height: 700px;
   overflow: auto;
   background-image: url('background.jpg');
   background-size: cover;
@@ -30,23 +53,56 @@
   width: 500px;
   height: 281px;
   border: 2px solid $redBook;
+  border-radius: 5px;
   background-size: cover;
+}
 
+.mini-audio {
+  height: 25px;
+  cursor: 'pointer';
+  margin-left: 15px;
 }
 
 .data-container {
   display: flex;
-  width: 695px;
+  width: 100%;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+}
+
+.title-container {
+  display: flex;
+  width: 48%;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 5px;
+}
+
+.line-icon1 {
+  background-image: url('cat11a.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-left: 5px;
+  height: 50px;
+  width: 15%;
+}
+
+.line-icon2 {
+  background-image: url('cat12a.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-left: 5px;
+  height: 50px;
+  width: 15%;
 }
 
 .line {
   text-align: center;
-  width: 45%;
-  height: 235px;
-  border: 2px solid $greenBook;
-  border-radius: 5px;
+  width: 90%;
+  min-height: 235px;
+
   font-size: 20px;
   font-weight: 600;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -84,10 +140,20 @@
 
 .modal-content {
   display: flex;
+  width: 80%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 20px;
+}
+
+.modal-content1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  overflow: hidden;
 }
 
 .title {
@@ -107,7 +173,7 @@
   color: $modalMessagePink;
   font-family: 'Montserrat', sans-serif;
   text-align: center;
-  max-height: 600px;
+  max-height: 650px;
 }
 
 .rules {
@@ -115,6 +181,17 @@
   width: 95%;
   font-weight: 600;
   font-size: 20px;
+  color: $modalMessagePink;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  max-height: 600px;
+}
+
+.rules1 {
+  height: fit-content;
+  width: 95%;
+  font-weight: 600;
+  font-size: 14px;
   color: $modalMessagePink;
   font-family: 'Montserrat', sans-serif;
   text-align: center;
@@ -133,9 +210,11 @@ p {
   font-family: 'Montserrat', sans-serif;
   font-size: 20px;
   font-weight: bold;
-  background: linear-gradient(to right,
-      rgba(196, 221, 164, 0.4),
-      rgba(184, 190, 173, 0.4));
+  background: linear-gradient(
+    to right,
+    rgba(196, 221, 164, 0.4),
+    rgba(184, 190, 173, 0.4)
+  );
 
   color: $redBook;
   padding: 10px 20px;
@@ -150,9 +229,44 @@ p {
 .modal-button0:hover {
   transform: scale(1.05);
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(to left,
-      rgba(196, 221, 164, 0.4),
-      rgba(184, 190, 173, 0.4));
+  background: linear-gradient(
+    to left,
+    rgba(196, 221, 164, 0.4),
+    rgba(184, 190, 173, 0.4)
+  );
+  color: $greenBook;
+}
+
+.modal-button {
+  font-family: Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  background: linear-gradient(
+    to right,
+    rgba(196, 221, 164, 0.4),
+    rgba(184, 190, 173, 0.4)
+  );
+
+  color: $redBook;
+  padding: 10px 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid $redBook;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+
+.modal-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    to left,
+    rgba(196, 221, 164, 0.4),
+    rgba(184, 190, 173, 0.4)
+  );
   color: $greenBook;
 }
 

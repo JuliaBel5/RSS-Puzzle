@@ -96,7 +96,7 @@ a:hover {
   width: 100%;
 }
 
-.temp-el {}
+//.temp-el {}
 
 .image-piece {
   display: flex;
@@ -238,7 +238,7 @@ a:hover {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 10px 20px;
+  margin: 20px 20px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -264,7 +264,7 @@ a:hover {
   display: inline-block;
   cursor: not-allowed;
   background: linear-gradient(to left, #f7f3f3, #bfbbbb);
-  margin: 10px 20px;
+  margin: 20px 20px;
   transition: background 0.5s ease;
 
   &:hover {

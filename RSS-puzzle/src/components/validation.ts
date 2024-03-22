@@ -33,6 +33,8 @@ export class Validation {
     if (firstNameValue && lastNameValue) {
       this.userAuthData.firstName = firstNameValue
       this.userAuthData.lastName = lastNameValue
+      state.user = firstNameValue
+      state.lastName = lastNameValue
       localStorage.setItem('catPuzzleUser', JSON.stringify(this.userAuthData))
 
       if (this.login.gameArea) {

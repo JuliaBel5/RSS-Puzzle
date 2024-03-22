@@ -15,6 +15,7 @@ export function createImagePieces(
   if (pictureElement instanceof HTMLElement) {
     const pictureWidth = pictureElement.offsetWidth
     const pictureHeight = pictureElement.offsetHeight
+
     const fragment = document.createDocumentFragment()
 
     list.forEach((item, index) => {

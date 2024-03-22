@@ -142,7 +142,7 @@ export class Header {
   changeOptionColor(selectElement: HTMLSelectElement, i: number) {
     if (selectElement && selectElement.options) {
       const option = selectElement.options[i - 1]
-      console.log('option.value', option.value, 'i', i)
+
       if (option.value === i.toString()) {
         option.style.backgroundColor = 'rgba(196,221,164, 0.5)'
       }

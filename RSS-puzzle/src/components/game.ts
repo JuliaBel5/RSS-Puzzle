@@ -25,9 +25,8 @@ export class Game {
   continueButton: HTMLButtonElement | undefined
   audio: HTMLAudioElement | undefined
   userData: UserData
-  stats: Stats  | undefined
+  stats: Stats | undefined
   userStats: UserStats | undefined
- 
 
   constructor(user: string) {
     this.user = user
@@ -47,18 +46,15 @@ export class Game {
     }
     if (localStorage.getItem('catPuzzleUserData')) {
       this.getSavedUserData()
-
     } else {
       this.init()
     }
-    
   }
 
   async init(): Promise<void> {
     await this.useLevelData()
-  
+
     if (this.level) {
-   
       this.array = this.level.transformedData[state.round - 1].words
 
       state.backgroundUrl = `url('https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/images/${this.level.transformedData[state.round - 1].imageSRC}')`
@@ -74,7 +70,7 @@ export class Game {
         'translation-container',
         ``,
       )
-     
+
       this.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
       if (this.gameArea) {
         this.gameArea.append(this.game)
@@ -83,7 +79,7 @@ export class Game {
       this.picture = createElement('div', 'picture', '', 'image')
       this.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
       this.picture.style.backgroundBlendMode = `saturation`
-    
+
       this.continueButton = createElement(
         'button',
         'disabled2',
@@ -103,7 +99,7 @@ export class Game {
         '',
         'round-container',
       )
-     
+
       this.continueButton.addEventListener('click', () => {
         const target = document.getElementById(`${state.lineNumber}`)
         if (target && this.continueButton) {
@@ -115,63 +111,92 @@ export class Game {
           }
         }
       })
-     
+
       this.autoCompleteButton.addEventListener('click', () => {
-         if(this.autoCompleteButton?.textContent === "Help me") {
-        const target = document.getElementById(`${state.lineNumber}`)
-        const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
-        const children = Array.from(document.querySelectorAll(selector))
-        if (target && this.continueButton) {
-          const elementsWithIds = Array.from(children).map((child) => ({
-            element: child,
-            idNum: parseInt(child.id.split('-')[1], 10),
-          }))
-          elementsWithIds.sort((a, b) => a.idNum - b.idNum)
-       
-          target.innerHTML = ''
-          this.continueButton.classList.add('continue')
-          this.continueButton.classList.remove('disabled2')
-          this.autoCompleteButton?.classList.remove('continue')
-          this.autoCompleteButton?.classList.add('disabled2')
-          elementsWithIds.forEach((item) => {
-            target.appendChild(item.element)
-            if (item.element instanceof HTMLElement) {
-            }
-          })
-          if (this.audio) {
-            this.audio.src = 'Bibip.mp3'
-            this.audio.play()
-          }
-          this.userData.autocomplete = true
-          this.saveUserData()
-          state.autocomplete = true;
-        }
-      } else  if(this.autoCompleteButton?.textContent === "Results" ){
-        if(this.userStats){
-        const statsContent = `${this.userStats.name}, ${this.userStats.author}, ${this.userStats.year}`
-        if (this.stats) {
-            this.stats.showStats(`Level ${state.level} Round ${state.round} results:`, statsContent)
-            if (this.stats.miniPicture) {
-            this.stats.miniPicture.style.backgroundImage = state.backgroundUrl
-            }
-            console.log(Object.entries(this.userStats.stats))
-            Object.entries(this.userStats.stats).forEach(([lineNumber, autocompleteStatus]) => {
-              // Create an element for the level
-              const levelElement = createElement('div', 'level-line', `Line ${lineNumber}: ${autocompleteStatus ? 'with help' : 'without help'}`);
-          
-              // Append the level to the appropriate column
-              if (this.stats && autocompleteStatus === true && this.stats.helpedLinesTitleContent) {
-                  this.stats.helpedLinesTitleContent.append(levelElement);
-              } else if (this.stats && autocompleteStatus === false && this.stats.completedLinesTitleContent){
-                  this.stats.completedLinesTitleContent.append(levelElement);
+        if (this.autoCompleteButton?.textContent === 'Help me') {
+          const target = document.getElementById(`${state.lineNumber}`)
+          const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
+          const children = Array.from(document.querySelectorAll(selector))
+          if (target && this.continueButton) {
+            const elementsWithIds = Array.from(children).map((child) => ({
+              element: child,
+              idNum: parseInt(child.id.split('-')[1], 10),
+            }))
+            elementsWithIds.sort((a, b) => a.idNum - b.idNum)
+
+            target.innerHTML = ''
+            this.continueButton.classList.add('continue')
+            this.continueButton.classList.remove('disabled2')
+            this.autoCompleteButton?.classList.remove('continue')
+            this.autoCompleteButton?.classList.add('disabled2')
+            elementsWithIds.forEach((item) => {
+              target.appendChild(item.element)
+              if (item.element instanceof HTMLElement) {
               }
-          });
+            })
+            if (this.audio) {
+              this.audio.src = 'Bibip.mp3'
+              this.audio.play()
+            }
+            this.userData.autocomplete = true
+            this.saveUserData()
+            state.autocomplete = true
+          }
+        } else if (this.autoCompleteButton?.textContent === 'Results') {
+          if (this.userStats) {
+            const statsContent = `${this.userStats.name}, ${this.userStats.author}, ${this.userStats.year}`
+            if (this.stats) {
+              this.stats.showStats(
+                `Level ${state.level} Round ${state.round} results:`,
+                statsContent,
+              )
+              if (this.stats.miniPicture) {
+                this.stats.miniPicture.style.backgroundImage =
+                  state.backgroundUrl
+              }
+
+              Object.entries(this.userStats.stats).forEach(
+                ([lineNumber, autocompleteStatus]) => {
+                  if (this.level) {
+                    const levelAudio = new Audio(
+                      `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[Number(lineNumber) - 1]}`,
+                    )
+
+                    const iconElement = createElement('img', 'mini-audio')
+                    iconElement.src = 'audioTip.png'
+                    iconElement.addEventListener('click', () => {
+                      levelAudio.play()
+                    })
+
+                    const levelElement = createElement(
+                      'div',
+                      'level-line',
+                      `Line ${lineNumber}: ${autocompleteStatus ? 'with help' : 'without help'}`,
+                    )
+
+                    levelElement.appendChild(iconElement)
+                    if (
+                      this.stats &&
+                      autocompleteStatus === true &&
+                      this.stats.helpedLinesTitleContent
+                    ) {
+                      this.stats.helpedLinesTitleContent.append(levelElement)
+                    } else if (
+                      this.stats &&
+                      autocompleteStatus === false &&
+                      this.stats.completedLinesTitleContent
+                    ) {
+                      this.stats.completedLinesTitleContent.append(levelElement)
+                    }
+                  }
+                },
+              )
+            }
+          }
         }
-      }
-    }
       })
       this.roundArrays = []
-   
+
       this.game.append(
         this.translationContainer,
         this.picture,
@@ -198,36 +223,52 @@ export class Game {
       this.header.bindRoundSelect(this.roundSelect)
       this.header.bindLevelSelect(this.levelSelect)
       this.translationContainer.style.visibility = 'visible'
-    
 
-    this.userStats = {
-      level: state.level,
-      round: state.round,
-      author: this.level.transformedData[state.round - 1].author,
-      name: this.level.transformedData[state.round - 1].name,
-      year:  this.level.transformedData[state.round - 1].year,
-      stats: {
-        1: null,
-        2: null,
-        3: null,
-        4: null,
-        5: null,
-        6: null,
-        7: null,
-        8: null,
-        9: null,
-        10: null,
-      },
+      this.userStats = {
+        level: state.level,
+        round: state.round,
+        author: this.level.transformedData[state.round - 1].author,
+        name: this.level.transformedData[state.round - 1].name,
+        year: this.level.transformedData[state.round - 1].year,
+        stats: {
+          1: null,
+          2: null,
+          3: null,
+          4: null,
+          5: null,
+          6: null,
+          7: null,
+          8: null,
+          9: null,
+          10: null,
+        },
+      }
+      if (this.header.levelSelect && this.header.roundSelect) {
+        this.header.levelSelect.value = state.level.toString()
+        this.header.roundSelect.value = state.round.toString()
+      }
     }
-    if(this.header.levelSelect && this.header.roundSelect) {
-  
-      this.header.levelSelect.value = state.level.toString()
-      this.header.roundSelect.value = state.round.toString()
-      
+
+    const mediaQueryAbove1000 = window.matchMedia('(min-width: 1001px)')
+    const mediaQueryBelow1000 = window.matchMedia('(max-width: 999px)')
+
+    const handleMediaQueryChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        this.updateLevel()
+      }
+    }
+
+    mediaQueryAbove1000.addEventListener('change', handleMediaQueryChange)
+    mediaQueryBelow1000.addEventListener('change', handleMediaQueryChange)
+
+    if (mediaQueryAbove1000.matches) {
+      this.updateLevel()
+    }
+
+    if (mediaQueryBelow1000.matches) {
+      this.updateLevel()
     }
   }
-  }
-
   startGame = (
     roundArrays: HTMLElement[][],
     roundContainer: HTMLElement,
@@ -654,28 +695,26 @@ export class Game {
           this.audio.src = 'solution.wav'
           this.audio.play()
         }
-        if (state.lineNumber === 10  ) {
+        if (state.lineNumber === 10) {
           this.roundArrays?.forEach((el) => {
             el.forEach((item) => {
               item.style.border = `0px solid rgba(0, 0, 0, 0)`
               item.style.boxShadow = '0px 0px 0px rgba(0, 0, 0, 0)'
               item.textContent = ''
-             
             })
-            
           })
           if (this.userStats) {
             const key = state.lineNumber.toString()
-            
+
             this.userStats.stats[key] = state.autocomplete
-            console.log(key,this.userStats.stats[key])
+
             state.autocomplete = false
-            }
-          if(this.autoCompleteButton){
-            this.autoCompleteButton.textContent = "Results"
+          }
+          if (this.autoCompleteButton) {
+            this.autoCompleteButton.textContent = 'Results'
             this.autoCompleteButton.classList.remove('disabled2')
             this.autoCompleteButton.classList.add('continue')
-            }
+          }
           if (this.roundContainer && this.level && this.translationContainer) {
             this.translationContainer.style.visibility = 'visible'
             this.translationContainer.textContent =
@@ -684,7 +723,6 @@ export class Game {
               this.level.transformedData[state.round - 1].author +
               ', ' +
               this.level.transformedData[state.round - 1].year
-            
           }
           target.style.border = ''
         }
@@ -694,9 +732,9 @@ export class Game {
   continue = (lineNumber: number, round: number, level: number): void => {
     if (lineNumber <= 9) {
       if (this.userStats) {
-      const key = state.lineNumber.toString()
-      this.userStats.stats[key] = state.autocomplete
-      state.autocomplete = false
+        const key = state.lineNumber.toString()
+        this.userStats.stats[key] = state.autocomplete
+        state.autocomplete = false
       }
       state.lineNumber += 1
       this.updateLine()
@@ -713,17 +751,12 @@ export class Game {
       if (this.header.roundSelect) {
         this.header.changeOptionColor(this.header.roundSelect, state.round)
       }
-     
+
       state.round += 1
       state.lineNumber = 1
-      
-      this.autoCompleteButton.textContent = "Help me"
+
+      this.autoCompleteButton.textContent = 'Help me'
       this.updateRound()
-      if (this.audio) {
-        this.audio.pause()
-        this.audio.src = 'newround2.mp3'
-        this.audio.play()
-      }
     } else if (round === state.roundsCount && level <= 5) {
       if (this.header.roundSelect) {
         this.header.changeOptionColor(this.header.roundSelect, state.round)
@@ -906,39 +939,34 @@ export class Game {
         this.updateLine()
       }
       if (this.header.roundSelect)
-     
         this.header.roundSelect.value = `${state.round}`
-        console.log('round select',this.header.roundSelect?.value)  
     }
     if (this.header.levelSelect) {
       this.header.levelSelect.value = `${state.level}`
-      console.log('round select', this.header.levelSelect?.value)  
     }
-    if (this.audio) {
+    if (this.audio && !state.isPlaying) {
       this.audio.src = 'newround2.mp3'
       this.audio.play()
     }
     this.userData.round = state.round
     this.saveUserData()
-    
   }
 
   async updateLevel() {
     await this.useLevelData()
     this.updateRound()
-   
+
     if (this.audio) {
+      state.isPlaying = true
       const newTrack = 'newlevel.mp3'
-      if (this.audio) {
-        this.audio.pause()
-        this.audio.src = newTrack
-        this.audio.play()
-      }
+      this.audio.pause()
+      this.audio.src = newTrack
+      this.audio.play()
+      state.isPlaying = false
     }
 
     this.userData.level = state.level
     this.saveUserData()
-    
   }
 
   roundSelect = () => {
@@ -992,9 +1020,8 @@ export class Game {
       state.round = this.userData.round
 
       state.lineNumber = this.userData.lineNumber
-console.log(1, state.round, state.level)
+
       this.init()
-      console.log(2, state.round, state.level)
     }
   }
   saveUserData() {
@@ -1013,11 +1040,10 @@ type UserStats = {
   round: number
   author: string
   name: string
-  year:  string
+  year: string
   stats: StatsData
 }
 
 type StatsData = {
   [key: string]: Boolean | null
-
 }

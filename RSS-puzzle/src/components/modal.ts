@@ -32,13 +32,13 @@ export class Modal {
     this.overlay = createElement('div', 'overlay')
     this.overlay.addEventListener('click', () => {})
     this.section.append(this.overlay)
-    this.modal = createElement('div', `modal0`)
-    this.modalContent = createElement('div', 'modal-content')
+    this.modal = createElement('div', `modal`)
+    this.modalContent = createElement('div', 'modal-content1')
     this.title = createElement('div', 'title', title)
-    this.message = createElement('div', 'rules', message)
+    this.message = createElement('div', 'rules1', message)
     this.modalButton = createElement(
       'button',
-      `modal-button0`,
+      `modal-button`,
       'Return to the game',
     )
     this.modalButton.addEventListener('click', () => {

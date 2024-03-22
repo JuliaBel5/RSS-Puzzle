@@ -4,6 +4,7 @@ import { rules } from './rules'
 import { Header } from './header'
 import { Toast } from './toast'
 import { state } from '../main'
+import { Validation } from './validation'
 
 type HandlerFunction = () => void
 
@@ -36,8 +37,9 @@ export class Start {
     const welcome = createElement(
       'p',
       'welcomeMessage',
-      `Welcome to CatPuzzle game, ${this.user} ${this.lastName}!`,
+      `Welcome to CatPuzzle game, ${state.user} ${state.lastName}!`,
     )
+    console.log(`Welcome to CatPuzzle game, ${this.user} ${this.lastName}!`)
     const leftPanel = createElement('div', 'leftStartPanel')
     const rightPanel = createElement('div', 'rightStartPanel')
     const showRulesButton = createElement(
@@ -77,14 +79,17 @@ export class Start {
     }
   }
   confirm = () => {
-    this.toast.show(`Are you sure you want to logout, ${this.user}?`)
+    this.toast.show(`Are you sure you want to logout, ${state.user}?`)
   }
 
   logout = () => {
     localStorage.removeItem('catPuzzleUser')
+    state.user = ""
+    state.lastName = ""
     if (this.gameArea && this.header) {
       this.gameArea.remove()
       this.header.remove()
+      new Validation()
     }
   }
 }
