@@ -3,7 +3,7 @@ export async function transformLevelData(
 ): Promise<LevelDataResult> {
   const { default: levelFile } = await import(
     `../data/wordCollectionLevel${level}.json`
-  )
+  );
 
   const transformedData: TransformedData[] = levelFile.rounds.map(
     (el: Round): TransformedData => {
@@ -16,18 +16,18 @@ export async function transformLevelData(
           return {
             pieces: word.textExample.split(' ').length,
             letters: word.textExample.split(' '),
-          }
+          };
         }),
         audioSrc: el.words.map((word) => word.audioExample),
         translation: el.words.map((word) => word.textExampleTranslate),
-      }
+      };
     },
-  )
+  );
 
   return {
     transformedData,
     roundsCount: levelFile.roundsCount,
-  }
+  };
 }
 
 interface Word {

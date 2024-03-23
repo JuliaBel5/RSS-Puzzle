@@ -57,9 +57,10 @@
   background-size: cover;
 }
 
+
 .mini-audio {
   height: 25px;
-  cursor: 'pointer';
+  cursor: pointer;
   margin-left: 15px;
 }
 
@@ -79,7 +80,7 @@
 }
 
 .line-icon1 {
-  background-image: url('cat11a.png');
+  background-image: url('cat12a.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -89,7 +90,7 @@
 }
 
 .line-icon2 {
-  background-image: url('cat12a.png');
+  background-image: url('catIdk.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -210,11 +211,9 @@ p {
   font-family: 'Montserrat', sans-serif;
   font-size: 20px;
   font-weight: bold;
-  background: linear-gradient(
-    to right,
-    rgba(196, 221, 164, 0.4),
-    rgba(184, 190, 173, 0.4)
-  );
+  background: linear-gradient(to right,
+      rgba(196, 221, 164, 0.4),
+      rgba(184, 190, 173, 0.4));
 
   color: $redBook;
   padding: 10px 20px;
@@ -229,11 +228,9 @@ p {
 .modal-button0:hover {
   transform: scale(1.05);
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(
-    to left,
-    rgba(196, 221, 164, 0.4),
-    rgba(184, 190, 173, 0.4)
-  );
+  background: linear-gradient(to left,
+      rgba(196, 221, 164, 0.4),
+      rgba(184, 190, 173, 0.4));
   color: $greenBook;
 }
 
@@ -242,11 +239,9 @@ p {
   font-family: 'Montserrat', sans-serif;
   font-size: 20px;
   font-weight: bold;
-  background: linear-gradient(
-    to right,
-    rgba(196, 221, 164, 0.4),
-    rgba(184, 190, 173, 0.4)
-  );
+  background: linear-gradient(to right,
+      rgba(196, 221, 164, 0.4),
+      rgba(184, 190, 173, 0.4));
 
   color: $redBook;
   padding: 10px 20px;
@@ -262,11 +257,9 @@ p {
 .modal-button:hover {
   transform: scale(1.05);
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(
-    to left,
-    rgba(196, 221, 164, 0.4),
-    rgba(184, 190, 173, 0.4)
-  );
+  background: linear-gradient(to left,
+      rgba(196, 221, 164, 0.4),
+      rgba(184, 190, 173, 0.4));
   color: $greenBook;
 }
 

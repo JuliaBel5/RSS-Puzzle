@@ -7,13 +7,24 @@ a:hover {
   background-color: $selectHover;
 }
 
-.loader {
+.loader1 {
   border: 16px solid $redBook;
   border-radius: 50%;
   border-top: 16px solid $greenBook;
   border-left: 16px solid $greenBook;
   width: 120px;
   height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+
+.loader {
+  border: 2px solid $redBook;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  background-image: url('loader2.png');
+  background-size: cover;
   animation: spin 2s linear infinite;
 }
 
@@ -28,7 +39,6 @@ a:hover {
 }
 
 .game {
-  margin-top: 80px;
   font-family: 'Gochi Hand', cursive;
   font-size: 36px;
   color: rgb(54, 108, 10);
@@ -62,7 +72,7 @@ a:hover {
 .round-container {
   position: relative;
   display: flex;
-  margin-top: 30px;
+  margin-top: 15px;
   height: 58.25px;
   border-radius: 5px;
   border: 2px solid $redBook;
@@ -76,6 +86,27 @@ a:hover {
     width: 750px;
     height: 45px;
   }
+}
+
+.settings-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mini-audio0 {
+  height: 55px;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.mini-cat {
+  height: 75px;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 20px;
 }
 
 .translation-container {
@@ -225,6 +256,7 @@ a:hover {
 }
 
 .continue {
+  display: inline-flex;
   background-color: $redBook;
   border: 2px solid $greenBook;
   width: 100px;
@@ -249,7 +281,7 @@ a:hover {
 }
 
 .disabled2 {
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   width: 100px;

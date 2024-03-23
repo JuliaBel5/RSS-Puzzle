@@ -1,14 +1,14 @@
-import { state } from '../main'
+import { state } from '../main';
 
 async function fetchData() {
   try {
-    const response = await fetch(`../data/wordCollectionLevel${state.level}`)
+    const response = await fetch(`../data/wordCollectionLevel${state.level}`);
 
     if (!response.ok) {
-      throw new Error(`Failed to load data: ${response.status}`)
+      throw new Error(`Failed to load data: ${response.status}`);
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
     data.rounds.forEach((round: Round) => {
       const roundInfo = round.words.map((word: Word) => ({
@@ -16,15 +16,15 @@ async function fetchData() {
         textExample: word.textExample,
         textExampleTranslate: word.textExampleTranslate,
         id: word.id,
-      }))
-      console.log(roundInfo)
-    })
+      }));
+      console.log(roundInfo);
+    });
   } catch (error) {
-    console.error('Fetching data failed:', error)
+    console.error('Fetching data failed:', error);
   }
 }
 
-fetchData()
+fetchData();
 
 interface Word {
   audioExample: string
@@ -43,9 +43,9 @@ export async function fetchAndTransformData() {
   try {
     const response = await fetch(
       `https://github.com/rolling-scopes-school/rss-puzzle-data/blob/main/data/wordCollectionLevel${state.level}.json`,
-    )
+    );
     // Parse the JSON data
-    const data = await response.json()
+    const data = await response.json();
 
     // Transform the data into the desired array format
     const array = data.rounds.flatMap((round: Round) => {
@@ -53,11 +53,11 @@ export async function fetchAndTransformData() {
         return {
           pieces: word.textExample.split(' ').length,
           letters: word.textExample.split(' '),
-        }
-      })
-    })
-    console.log(array)
+        };
+      });
+    });
+    console.log(array);
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error:', error);
   }
 }

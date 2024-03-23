@@ -1,55 +1,70 @@
-import { createElement, createInputElement } from '../utils/createElement'
-type HandlerFunction = () => void
+import { createElement, createInputElement } from '../utils/createElement';
+
+type HandlerFunction = () => void;
 
 export class Login {
-  gameArea: HTMLElement | undefined
-  firstNameInput: HTMLInputElement | undefined
-  firstNameError: HTMLParagraphElement | undefined
-  lastNameInput: HTMLInputElement | undefined
-  lastNameError: HTMLParagraphElement | undefined
-  loginButton: HTMLButtonElement | undefined
+  gameArea: HTMLElement | undefined;
+
+  firstNameInput: HTMLInputElement | undefined;
+
+  firstNameError: HTMLParagraphElement | undefined;
+
+  lastNameInput: HTMLInputElement | undefined;
+
+  lastNameError: HTMLParagraphElement | undefined;
+
+  loginButton: HTMLButtonElement | undefined;
+  audio: HTMLAudioElement | undefined;
 
   constructor() {
-    this.init()
+    this.init();
   }
 
   init(): void {
-    this.gameArea = createElement('div', 'gamearea')
-    document.body.append(this.gameArea)
-    const container = createElement('div', `container`)
+    this.gameArea = createElement('div', 'gamearea');
+    document.body.append(this.gameArea);
+    this.audio = new Audio()
+    const container = createElement('div', 'container');
     const welcome = createElement(
       'p',
       'welcomeMessage',
       'Hi! Enter your name, please!',
-    )
-    const buttonContainer = createElement('form', 'inputContainer')
-    const leftPanel = createElement('div', 'leftPanel')
-    const rightPanel = createElement('div', 'rightPanel')
-    const firstNameLabel = createElement('label', 'label', 'First Name')
+    );
+    const buttonContainer = createElement('form', 'inputContainer');
+    const leftPanel = createElement('div', 'leftPanel');
+    leftPanel.style.cursor = 'pointer'
+    leftPanel.addEventListener('click', () => {
+      if (this.audio) {
+      this.audio.src = 'meow4.mp3'
+      this.audio.play()
+      }
+    })
+    const rightPanel = createElement('div', 'rightPanel');
+    const firstNameLabel = createElement('label', 'label', 'First Name');
     this.firstNameInput = createInputElement(
       'input',
       'input',
       '',
       'firstName',
       { required: true },
-    )
-    firstNameLabel.htmlFor = 'firstName'
-    this.firstNameError = createElement('p', 'error', '', 'firstNameError')
-    const lastNameLabel = createElement('label', 'label', 'Surname')
+    );
+    firstNameLabel.htmlFor = 'firstName';
+    this.firstNameError = createElement('p', 'error', '', 'firstNameError');
+    const lastNameLabel = createElement('label', 'label', 'Surname');
     this.lastNameInput = createInputElement('input', 'input', '', 'lastName', {
       required: true,
-    })
-    lastNameLabel.htmlFor = 'lastName'
-    this.lastNameError = createElement('p', 'error', '', 'lastNameError')
+    });
+    lastNameLabel.htmlFor = 'lastName';
+    this.lastNameError = createElement('p', 'error', '', 'lastNameError');
     this.loginButton = createElement(
       'button',
       'disabled',
       'Login',
       'loginButton',
-    )
-    this.gameArea.append(container)
-    container.append(leftPanel, rightPanel)
-    rightPanel.append(welcome, buttonContainer)
+    );
+    this.gameArea.append(container);
+    container.append(leftPanel, rightPanel);
+    rightPanel.append(welcome, buttonContainer);
     buttonContainer.append(
       firstNameLabel,
       this.firstNameInput,
@@ -58,46 +73,48 @@ export class Login {
       this.lastNameInput,
       this.lastNameError,
       this.loginButton,
-    )
+    );
 
-    this.firstNameInput.oninvalid = (e: Event) => {
-      ;(e.target as HTMLInputElement).setCustomValidity(
+    this.firstNameInput.addEventListener('invalid', (e: Event) => {
+      (e.target as HTMLInputElement).setCustomValidity(
         'Please enter your first name.',
-      )
-    }
-    this.firstNameInput.oninput = (e: Event) => {
-      ;(e.target as HTMLInputElement).setCustomValidity('')
-    }
+      );
+    });
+    this.firstNameInput.addEventListener('input', (e: Event) => {
+      (e.target as HTMLInputElement).setCustomValidity('');
+    });
 
-    this.lastNameInput.oninvalid = (e: Event) => {
-      ;(e.target as HTMLInputElement).setCustomValidity(
+    this.lastNameInput.addEventListener('invalid', (e: Event) => {
+      (e.target as HTMLInputElement).setCustomValidity(
         'Please enter your last name.',
-      )
-    }
-    this.lastNameInput.oninput = (e: Event) => {
-      ;(e.target as HTMLInputElement).setCustomValidity('')
-    }
+      );
+    });
+    this.lastNameInput.addEventListener('input', (e: Event) => {
+      (e.target as HTMLInputElement).setCustomValidity('');
+    });
   }
+
   bindFirstNameInput(handler: HandlerFunction): void {
     if (this.firstNameInput instanceof HTMLInputElement) {
       this.firstNameInput.addEventListener('input', () => {
-        handler()
-      })
+        handler();
+      });
     }
   }
 
   bindLastNameInput(handler: HandlerFunction): void {
     if (this.lastNameInput instanceof HTMLInputElement) {
       this.lastNameInput.addEventListener('input', () => {
-        handler()
-      })
+        handler();
+      });
     }
   }
+
   bindSubmit(handler: HandlerFunction): void {
     if (this.loginButton) {
       this.loginButton.addEventListener('click', () => {
-        handler()
-      })
+        handler();
+      });
     }
   }
 }

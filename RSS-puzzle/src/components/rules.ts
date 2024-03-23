@@ -1,4 +1,4 @@
-export const rules: string = `The objective of this game is to improve your English skills by rearranging words to form correct sentences 
+export const rules = `The objective of this game is to improve your English skills by rearranging words to form correct sentences 
 and placing them in the correct order to compose a painting.
 <p>Level and Round Selection:</p> Choose a difficulty level from 1 to 6, with 1 being the easiest and 6 being the hardest.
 Inside each level, select any round you wish to start with. Each round contains 10 sentences.
@@ -21,4 +21,4 @@ This button automatically arranges the words in the correct order for the curren
 <p>Game Statistics:</p>
 A button to show game statistics, indicating which levels and rounds have been completed.<br>A section to display 
 levels completed with the help of the "I don't know" button, indicating your progress and areas where you might need more practice.
-<p>Enjoy!</p>`
+<p>Enjoy!</p>`;
