@@ -2,23 +2,23 @@ export function createElement<T extends keyof HTMLElementTagNameMap>(
   tag: T,
   className = '',
   content = '',
-  id?: string,
+  id?: string
 ): HTMLElementTagNameMap[T] {
-  const element = document.createElement(tag);
+  const element = document.createElement(tag)
 
   if (className) {
-    element.className = className;
+    element.className = className
   }
 
   if (content) {
-    element.textContent = content;
+    element.textContent = content
   }
 
   if (id) {
-    element.id = id;
+    element.id = id
   }
 
-  return element;
+  return element
 }
 
 export function createInputElement<T extends keyof HTMLElementTagNameMap>(
@@ -26,14 +26,14 @@ export function createInputElement<T extends keyof HTMLElementTagNameMap>(
   className = '',
   content = '',
   id?: string,
-  attributes: Record<string, string | boolean> = {},
+  attributes: Record<string, string | boolean> = {}
 ): HTMLElementTagNameMap[T] {
-  const element = document.createElement(tag);
-  if (className) element.classList.add(className);
-  if (content) element.textContent = content;
-  if (id) element.id = id;
+  const element = document.createElement(tag)
+  if (className) element.classList.add(className)
+  if (content) element.textContent = content
+  if (id) element.id = id
   for (const key in attributes) {
-    element.setAttribute(key, attributes[key].toString());
+    element.setAttribute(key, attributes[key].toString())
   }
-  return element;
+  return element
 }

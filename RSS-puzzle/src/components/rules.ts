@@ -21,4 +21,4 @@ This button automatically arranges the words in the correct order for the curren
 <p>Game Statistics:</p>
 A button to show game statistics, indicating which levels and rounds have been completed.<br>A section to display 
 levels completed with the help of the "I don't know" button, indicating your progress and areas where you might need more practice.
-<p>Enjoy!</p>`;
+<p>Enjoy!</p>`
