@@ -69,11 +69,11 @@ export class Stats {
     this.completedLinesTitle = createElement(
       'div',
       'line',
-      'Lines completed without help',
+      'Lines completed without help'
     )
     this.completedLinesTitleContainer.append(
       this.completedLinesIcon,
-      this.completedLinesTitle,
+      this.completedLinesTitle
     )
 
     this.helpedLinesTitleContainer = createElement('div', 'title-container')
@@ -81,11 +81,11 @@ export class Stats {
     this.helpedLinesTitle = createElement(
       'div',
       'line',
-      'Lines completed with help',
+      'Lines completed with help'
     )
     this.helpedLinesTitleContainer.append(
       this.helpedLinesIcon,
-      this.helpedLinesTitle,
+      this.helpedLinesTitle
     )
     this.completedLinesTitleContent = createElement('div', 'line-content')
 
@@ -94,7 +94,7 @@ export class Stats {
     this.statsButton = createElement(
       'button',
       'modal-button0',
-      'Return to the game',
+      'Return to the game'
     )
     this.statsButton.addEventListener('click', () => {
       this.audio.src = button
@@ -106,7 +106,7 @@ export class Stats {
     this.stats.append(this.statsContent)
     this.dataContainer.append(
       this.completedLinesTitleContainer,
-      this.helpedLinesTitleContainer,
+      this.helpedLinesTitleContainer
     )
     this.completedLinesTitle.append(this.completedLinesTitleContent)
     this.helpedLinesTitle.append(this.helpedLinesTitleContent)
@@ -115,7 +115,7 @@ export class Stats {
       this.miniPicture,
       this.message,
       this.dataContainer,
-      this.statsButton,
+      this.statsButton
     )
     this.section.append(this.stats)
   }

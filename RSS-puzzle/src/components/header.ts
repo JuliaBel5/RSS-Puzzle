@@ -66,7 +66,7 @@ export class Header {
       levelSelectLabel,
       this.levelSelect,
       roundSelectLabel,
-      this.roundSelect,
+      this.roundSelect
     )
 
     this.catElement = createElement('img', 'mini-cat')
@@ -75,6 +75,7 @@ export class Header {
     this.catElement.addEventListener('click', () => {
       if (this.audio) {
         this.audio.src = 'meow.mp3'
+        this.audio.volume = 0.3
         this.audio.play()
       }
     })
@@ -85,7 +86,7 @@ export class Header {
     const tipIcons = [
       { id: 'backgroundTip', label: 'Background Tip' },
       { id: 'audioTip', label: 'Audio Tip' },
-      { id: 'translationTip', label: 'Translation Tip' },
+      { id: 'translationTip', label: 'Translation Tip' }
     ]
     tipIcons.forEach((icon) => {
       const iconElement = createElement('img', icon.id, '', icon.id)
@@ -124,6 +125,7 @@ export class Header {
     this.catElement.addEventListener('click', () => {
       if (this.audio) {
         this.audio.src = 'meow.mp3'
+        this.audio.volume = 0.3
         this.audio.play()
       }
     })

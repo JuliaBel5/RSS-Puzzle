@@ -22,7 +22,7 @@ export class Start {
       'button',
       'startButton',
       'Start the Game',
-      'startButton',
+      'startButton'
     )
   }
 
@@ -40,7 +40,7 @@ export class Start {
     const welcome = createElement(
       'p',
       'welcomeMessage',
-      `Welcome to CatPuzzle game, ${this.user} ${this.lastName}!`,
+      `Welcome to CatPuzzle game, ${this.user} ${this.lastName}!`
     )
 
     const leftPanel = createElement('div', 'leftStartPanel')
@@ -48,6 +48,7 @@ export class Start {
     leftPanel.addEventListener('click', () => {
       if (this.audio) {
         this.audio.src = 'meow3.mp3'
+        this.audio.volume = 0.3
         this.audio.play()
       }
     })
@@ -55,7 +56,7 @@ export class Start {
     const showRulesButton = createElement(
       'button',
       'startButton',
-      'Show Game Rules',
+      'Show Game Rules'
     )
     showRulesButton.addEventListener('click', () => {
       if (this.modal) {

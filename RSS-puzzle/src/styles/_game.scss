@@ -140,13 +140,15 @@ a:hover {
   font-weight: 600;
   width: 100px;
   height: 75px;
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.2),
-    0 6px 20px rgba(0, 0, 0, 0.19);
+  box-shadow: 4px 8px 8px rgba(25, 16, 2, 0.5);
+  // box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
+ //   0 4px 8px rgba(0, 0, 0, 0.2),
+ //   0 6px 20px rgba(0, 0, 0, 0.19);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  border: 1px solid #000;
+  border: 1.5px solid rgba(25, 16, 2, 0.5);
+  border-radius: 5px;
   transition: all 0.5s linear;
-  z-index: 2;
+  // z-index: 2;
 }
 
 .image-piece:hover {
@@ -156,6 +158,41 @@ a:hover {
   border: 3px solid rgb(217, 213, 141);
   border-radius: 7px;
   z-index: 7;
+}
+
+.image-piece-after {
+  position: absolute;
+ top: calc(50% - 12px);
+ right: -12px;
+  height: 24px;
+  width: 12px;
+  border-radius: 0px 12px 12px 0px;
+  border: 3px solid rgba(25, 16, 2, 0.5);
+  border-left: 0;
+  z-index: 7;
+ 
+}
+
+.image-piece::before {
+content: '';
+position: absolute;
+  top: calc(50% - 12px);
+  left: 0px;
+  height: 24px;
+  width: 12px;
+  border-radius: 0px 12px 12px 0px;
+  border: 1.5px solid rgba(25, 16, 2, 0.5);
+  border-left: none;
+  background-color: rgb(238, 231, 231);
+  opacity: 0.5;
+ // z-index: 1;
+}
+.image-piece0::before {
+  display: none;
+}
+
+.win .image-piece::before {
+  display: none;
 }
 
 .disabled {

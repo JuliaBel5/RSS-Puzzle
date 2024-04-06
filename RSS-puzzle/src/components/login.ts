@@ -29,7 +29,7 @@ export class Login {
     const welcome = createElement(
       'p',
       'welcomeMessage',
-      'Hi! Enter your name, please!',
+      'Hi! Enter your name, please!'
     )
     const buttonContainer = createElement('form', 'inputContainer')
     const leftPanel = createElement('div', 'leftPanel')
@@ -37,6 +37,7 @@ export class Login {
     leftPanel.addEventListener('click', () => {
       if (this.audio) {
         this.audio.src = 'meow4.mp3'
+        this.audio.volume = 0.3
         this.audio.play()
       }
     })
@@ -47,13 +48,13 @@ export class Login {
       'input',
       '',
       'firstName',
-      { required: true },
+      { required: true }
     )
     firstNameLabel.htmlFor = 'firstName'
     this.firstNameError = createElement('p', 'error', '', 'firstNameError')
     const lastNameLabel = createElement('label', 'label', 'Surname')
     this.lastNameInput = createInputElement('input', 'input', '', 'lastName', {
-      required: true,
+      required: true
     })
     lastNameLabel.htmlFor = 'lastName'
     this.lastNameError = createElement('p', 'error', '', 'lastNameError')
@@ -61,7 +62,7 @@ export class Login {
       'button',
       'disabled',
       'Login',
-      'loginButton',
+      'loginButton'
     )
     this.gameArea.append(container)
     container.append(leftPanel, rightPanel)
@@ -73,12 +74,12 @@ export class Login {
       lastNameLabel,
       this.lastNameInput,
       this.lastNameError,
-      this.loginButton,
+      this.loginButton
     )
 
     this.firstNameInput.addEventListener('invalid', (e: Event) => {
       ;(e.target as HTMLInputElement).setCustomValidity(
-        'Please enter your first name.',
+        'Please enter your first name.'
       )
     })
     this.firstNameInput.addEventListener('input', (e: Event) => {
@@ -87,7 +88,7 @@ export class Login {
 
     this.lastNameInput.addEventListener('invalid', (e: Event) => {
       ;(e.target as HTMLInputElement).setCustomValidity(
-        'Please enter your last name.',
+        'Please enter your last name.'
       )
     })
     this.lastNameInput.addEventListener('input', (e: Event) => {

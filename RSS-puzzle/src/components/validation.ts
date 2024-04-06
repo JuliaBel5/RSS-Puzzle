@@ -1,7 +1,6 @@
-// import { state } from '../main'
 import { showLoader } from '../utils/loader'
 // eslint-disable-next-line import/no-cycle
-import { Game } from './game'
+import { Game } from './game/game'
 import { Header } from './header'
 import { Login } from './login'
 import { Start } from './start'
@@ -127,7 +126,7 @@ export class Validation {
         } else if (
           this.login.firstNameInput.value &&
           !uppercaseFirstLetterPattern.test(
-            this.login.firstNameInput.value.charAt(0),
+            this.login.firstNameInput.value.charAt(0)
           )
         ) {
           this.login.firstNameError.textContent =
@@ -151,7 +150,7 @@ export class Validation {
         } else if (
           this.login.lastNameInput.value &&
           !uppercaseFirstLetterPattern.test(
-            this.login.lastNameInput.value.charAt(0),
+            this.login.lastNameInput.value.charAt(0)
           )
         ) {
           this.login.lastNameError.textContent =

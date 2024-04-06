@@ -1,19 +1,20 @@
 /* eslint-disable import/prefer-default-export */
 // eslint-disable-next-line import/no-cycle
-import { state } from '../main'
-import { createElement } from '../utils/createElement'
+import { state } from '../../main'
+import { createElement } from '../../utils/createElement'
+import { createImagePieces, ImagePieceData } from '../../utils/createPieces'
 import {
-  createImagePieces,
-  ImagePieceData,
   allChildrenHaveClass,
   insertElBeforeTempEl,
   insertElBeforeDropzoneAndRemoveDuplicate,
-} from '../utils/createPieces'
-// import { showLoader } from '../utils/loader'
-import { shuffleAndCheck } from '../utils/shuffle'
-import { Header, changeOptionColor } from './header'
-import { LevelDataResult, transformLevelData } from './levels'
-import { Stats } from './stats'
+  disableButton,
+  unableButton
+} from '../../utils/utils'
+import { shuffleAndCheck } from '../../utils/shuffle'
+import { Header, changeOptionColor } from '../header'
+import { LevelDataResult, transformLevelData } from '../levels'
+import { Stats } from '../stats'
+import { UserData, UserStats } from './types'
 // import { Toast } from './toast'
 // import { Validation } from './validation'
 
@@ -74,7 +75,7 @@ export class Game {
       lineNumber: 1,
       round: 1,
       level: 1,
-      autocomplete: false,
+      autocomplete: false
     }
     if (localStorage.getItem('catPuzzleUserData')) {
       this.getSavedUserData()
@@ -100,7 +101,7 @@ export class Game {
       this.translationContainer = createElement(
         'div',
         'translation-container',
-        '',
+        ''
       )
 
       this.settingsContainer = createElement('div', 'settings-container', '')
@@ -129,13 +130,14 @@ export class Game {
       this.catElement.addEventListener('click', () => {
         if (this.audio) {
           this.audio.src = 'meow2.mp3'
+          this.audio.volume = 0.3
           this.audio.play()
         }
       })
       this.settingsContainer.append(
         this.catElement,
         this.audioElement,
-        this.translationContainer,
+        this.translationContainer
       )
       this.game.append(this.settingsContainer)
       this.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
@@ -149,22 +151,22 @@ export class Game {
 
       this.continueButton = createElement(
         'button',
-        'disabled2',
+        'continue',
         'Check',
-        'check',
+        'check'
       )
       this.autoCompleteButton = createElement(
         'button',
         'continue',
         'Help me',
-        'autocomplete',
+        'autocomplete'
       )
 
       this.roundContainer = createElement(
         'div',
         'round-container',
         '',
-        'round-container',
+        'round-container'
       )
 
       this.continueButton.addEventListener('click', () => {
@@ -187,15 +189,13 @@ export class Game {
           if (target && this.continueButton) {
             const elementsWithIds = Array.from(children).map((child) => ({
               element: child,
-              idNum: Number.parseInt(child.id.split('-')[1], 10),
+              idNum: Number.parseInt(child.id.split('-')[1], 10)
             }))
             elementsWithIds.sort((a, b) => a.idNum - b.idNum)
 
             target.innerHTML = ''
-            this.continueButton.classList.add('continue')
-            this.continueButton.classList.remove('disabled2')
-            this.autoCompleteButton.classList.remove('continue')
-            this.autoCompleteButton.classList.add('disabled2')
+            unableButton(this.continueButton, 'disabled2', 'continue')
+            disableButton(this.autoCompleteButton, 'disabled2', 'continue')
             elementsWithIds.forEach((item) => {
               target.append(item.element)
             })
@@ -214,7 +214,7 @@ export class Game {
             this.audio.play()
             this.stats.showStats(
               `Level ${state.level} Round ${state.round} results:`,
-              statsContent,
+              statsContent
             )
             if (this.stats.miniPicture) {
               this.stats.miniPicture.style.backgroundImage = state.backgroundUrl
@@ -224,7 +224,7 @@ export class Game {
               ([lineNumber, autocompleteStatus]) => {
                 if (this.level) {
                   const levelAudio = new Audio(
-                    `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[Number(lineNumber) - 1]}`,
+                    `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[Number(lineNumber) - 1]}`
                   )
 
                   const iconElement = createElement('img', 'mini-audio')
@@ -236,7 +236,7 @@ export class Game {
                   const levelElement = createElement(
                     'div',
                     'level-line',
-                    `Line ${lineNumber}: ${autocompleteStatus ? 'with help' : 'without help'}`,
+                    `Line ${lineNumber}: ${autocompleteStatus ? 'with help' : 'without help'}`
                   )
 
                   levelElement.append(iconElement)
@@ -254,7 +254,7 @@ export class Game {
                     this.stats.completedLinesTitleContent.append(levelElement)
                   }
                 }
-              },
+              }
             )
           }
         }
@@ -265,19 +265,19 @@ export class Game {
         this.picture,
         this.roundContainer,
         this.autoCompleteButton,
-        this.continueButton,
+        this.continueButton
       )
       createImagePieces(
         this.picture,
-        this.roundContainer,
         this.roundArrays,
         this.array,
+        state.backgroundUrl
       )
       this.startGame(
         this.roundArrays,
         this.roundContainer,
-        state.lineNumber,
-        this.continueButton,
+        state.lineNumber
+        //   this.continueButton
       )
 
       this.header.bindTranslationTipOn(this.translationTipOn)
@@ -303,8 +303,8 @@ export class Game {
           7: null,
           8: null,
           9: null,
-          10: null,
-        },
+          10: null
+        }
       }
       if (this.header.levelSelect && this.header.roundSelect) {
         this.header.levelSelect.value = state.level.toString()
@@ -331,29 +331,40 @@ export class Game {
     if (mediaQueryBelow1000.matches) {
       this.updateLevel()
     }
+    document.addEventListener('lineIsCompleted', () => {
+      if (this.continueButton && this.autoCompleteButton) {
+        unableButton(this.continueButton, 'disabled2', 'continue')
+        unableButton(this.autoCompleteButton, 'disabled2', 'continue')
+      }
+    })
+
+    document.addEventListener('lineIsNotCompleted', () => {
+      if (this.continueButton && this.autoCompleteButton) {
+        disableButton(this.continueButton, 'disabled2', 'continue')
+      }
+    })
   }
 
-  startGame = (
+  private startGame = (
     roundArrays: HTMLElement[][],
     roundContainer: HTMLElement,
-    lineNumber: number,
-    continueButton: HTMLElement,
+    lineNumber: number
+    // continueButton: HTMLElement
   ) => {
     roundContainer.innerHTML = ''
     const target = document.getElementById(lineNumber.toString())
     const gameArrLength = roundArrays[lineNumber - 1].length
     const gameArrIndexes: number[] = Array.from(
       { length: gameArrLength },
-      (_, index) => index,
+      (_, index) => index
     )
     const lineNumberArr = Array.from(
       { length: state.lineNumber - 1 },
-      (_, i) => 1 + i,
+      (_, i) => 1 + i
     )
     lineNumberArr.forEach((num) => {
       const selector = `.line-container[data-line="${num}"]`
       const resultContainer = document.querySelector(selector)
-
       if (resultContainer instanceof HTMLElement) {
         resultContainer.style.display = 'flex'
         const childrenArray = Array.from(resultContainer.children)
@@ -372,141 +383,40 @@ export class Game {
         //  el.style.background = `url('brown-background.jpg')`
         el.style.backgroundImage = state.backgroundUrl
         target.style.border = ''
-        //    const elWidth = el.style.width
-        //   const elHeight = el.style.height
-        //   const tempEl = this.createTemp(elWidth, elHeight)
-        //    target.append(tempEl)
-        //    target.insertBefore(tempEl, el)
         roundContainer.append(el)
 
         el.addEventListener('click', () => {
           if (roundContainer.contains(el)) {
             // если el в строке раунда
-            if (
-              target.children.length === 0 || // если у строки картинки нет чайлдов,
-              allChildrenHaveClass(target, 'temp-el')
-            ) {
-              target.innerHTML = ''
-
-              const elWidth = el.style.width
-              const elHeight = el.style.height
-              const tempEl = this.createTemp(elWidth, elHeight)
-              roundContainer.append(tempEl)
-              roundContainer.insertBefore(tempEl, el)
-
-              el.style.top = `${Number.parseInt(el.style.height, 10) * (10 - lineNumber + 1)}px`
-              target.append(el) // переходит на картинку
-
-              el.getBoundingClientRect()
-              el.style.zIndex = '5'
-              el.style.top = '0px'
-
-              if (
-                allChildrenHaveClass(roundContainer, 'temp-el') ||
-                roundContainer.children.length === 0
-              ) {
-                this.continueButton?.classList.remove('disabled2')
-                this.continueButton?.classList.add('continue')
-                this.autoCompleteButton?.classList.remove('disabled2')
-                this.autoCompleteButton?.classList.add('continue')
-                continueButton.textContent = 'Check'
-              } else {
-                this.continueButton?.classList.remove('continue')
-                this.continueButton?.classList.add('disabled2')
-                continueButton.textContent = 'Check'
-              }
-            } else {
-              const elWidth = el.style.width
-              const elHeight = el.style.height
-              const tempEl = this.createTemp(elWidth, elHeight)
-              roundContainer.append(tempEl)
-              roundContainer.insertBefore(tempEl, el)
-              el.style.top = `${Number.parseInt(el.style.height, 10) * (10 - lineNumber + 1)}px`
-              insertElBeforeTempEl(target, elWidth, el)
-              el.getBoundingClientRect()
-              el.style.zIndex = '5'
-              el.style.top = '0px'
-              if (
-                (this.autoCompleteButton &&
-                  allChildrenHaveClass(roundContainer, 'temp-el')) ||
-                (this.autoCompleteButton &&
-                  roundContainer.children.length === 0)
-              ) {
-                continueButton.classList.remove('disabled2')
-                continueButton.classList.add('continue')
-                this.autoCompleteButton.classList.remove('disabled2')
-                this.autoCompleteButton.classList.add('continue')
-                continueButton.textContent = 'Check'
-              } else if (this.autoCompleteButton) {
-                continueButton.classList.remove('continue')
-                continueButton.classList.add('disabled2')
-                continueButton.textContent = 'Check'
-              }
-            }
-          } else if (
-            roundContainer.children.length === 0 || // если строка заполнена только временными элементами
-            allChildrenHaveClass(roundContainer, 'temp-el') // если el вверху
-          ) {
-            roundContainer.innerHTML = ''
-
-            const elWidth = el.style.width
-            const elHeight = el.style.height
-            const tempEl = this.createTemp(elWidth, elHeight)
-            target.append(tempEl)
-            target.insertBefore(tempEl, el)
-
-            roundContainer.append(el)
-            el.style.top = `-${Number.parseInt(el.style.height, 10) * (10 - lineNumber + 1)}px`
-            el.getBoundingClientRect()
-            el.style.zIndex = '5'
-            el.style.top = '0px'
-            if (
-              (this.autoCompleteButton &&
-                allChildrenHaveClass(roundContainer, 'temp-el')) ||
-              (this.autoCompleteButton && roundContainer.children.length === 0)
-            ) {
-              continueButton.classList.remove('disabled2')
-              continueButton.classList.add('continue')
-              this.autoCompleteButton.classList.remove('disabled2')
-              this.autoCompleteButton.classList.add('continue')
-              continueButton.textContent = 'Check'
-            } else if (this.autoCompleteButton) {
-              continueButton.classList.remove('continue')
-              continueButton.classList.add('disabled2')
-              continueButton.textContent = 'Check'
-            }
+            this.handleElClick(el, roundContainer, target, 1)
           } else {
-            const elWidth = el.style.width
-            const elHeight = el.style.height
-            const tempEl = this.createTemp(elWidth, elHeight)
-            target.append(tempEl)
-            target.insertBefore(tempEl, el)
-
-            insertElBeforeTempEl(roundContainer, elWidth, el)
-            el.style.top = `-${Number.parseInt(el.style.height, 10) * (10 - lineNumber + 1)}px`
-            el.getBoundingClientRect()
-            el.style.zIndex = '5'
-            el.style.top = '0px'
-            if (
-              (this.autoCompleteButton &&
-                allChildrenHaveClass(roundContainer, 'temp-el')) ||
-              (this.autoCompleteButton && roundContainer.children.length === 0)
-            ) {
-              continueButton.classList.remove('disabled2')
-              continueButton.classList.add('continue')
-              this.autoCompleteButton.classList.remove('disabled2')
-              this.autoCompleteButton.classList.add('continue')
-              continueButton.textContent = 'Check'
-            } else if (this.autoCompleteButton) {
-              continueButton.classList.remove('continue')
-              continueButton.classList.add('disabled2')
-              continueButton.textContent = 'Check'
-            }
+            // если el в строке картинки
+            this.handleElClick(el, target, roundContainer, -1)
           }
+          this.verifyChildrenLength()
         })
-        el.style.zIndex = '2'
       }
     })
+    roundContainer.addEventListener('drop', (e): void => {
+      this.dropHandler(e, 'round-container')
+    })
+    roundContainer.addEventListener('dragover', (e) => {
+      e.preventDefault()
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'move'
+      }
+    })
+    if (target) {
+      target.addEventListener('drop', (e): void => {
+        this.dropHandler(e, 'line-container')
+      })
+      target.addEventListener('dragover', (e) => {
+        e.preventDefault()
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'move'
+        }
+      })
+    }
   }
 
   /*  confirm = () => {
@@ -534,11 +444,12 @@ export class Game {
         allChildrenHaveClass(this.roundContainer, 'temp-el') ||
         this.roundContainer.children.length === 0
       ) {
-        this.continueButton.classList.remove('disabled2')
-        this.continueButton.classList.add('continue')
+        unableButton(this.continueButton, 'disabled2', 'continue')
+        unableButton(this.autoCompleteButton, 'disabled2', 'continue')
+        this.continueButton.textContent = 'Check'
       } else {
-        this.continueButton.classList.remove('continue')
-        this.continueButton.classList.add('disabled2')
+        disableButton(this.continueButton, 'disabled2', 'continue')
+        this.continueButton.textContent = 'Check'
       }
     }
   }
@@ -567,8 +478,9 @@ export class Game {
               dropzone.parentNode,
               dragWidth,
               draggableElement,
-              dropzone,
+              dropzone
             )
+
             this.verifyChildrenLength()
           }
         }
@@ -624,10 +536,10 @@ export class Game {
         }
       }
 
-      if (isOrderCorrect) {
+      if (isOrderCorrect && this.autoCompleteButton) {
         button.textContent = 'Continue'
-        button.classList.add('continue')
-        button.classList.remove('disabled2')
+        unableButton(button, 'disabled2', 'continue')
+        disableButton(this.autoCompleteButton, 'disabled2', 'continue')
         target.style.border = '2px solid green'
         childrenArray.forEach((child) => {
           if (child instanceof HTMLElement) {
@@ -651,6 +563,7 @@ export class Game {
               item.textContent = ''
             })
           })
+          this.picture?.classList.add('win')
           if (this.userStats) {
             const key = state.lineNumber.toString()
 
@@ -660,8 +573,7 @@ export class Game {
           }
           if (this.autoCompleteButton && this.audioElement && this.catElement) {
             this.autoCompleteButton.textContent = 'Results'
-            this.autoCompleteButton.classList.remove('disabled2')
-            this.autoCompleteButton.classList.add('continue')
+            unableButton(this.autoCompleteButton, 'disabled2', 'continue')
             this.audioElement.style.display = 'none'
             this.catElement.style.display = 'inline-block'
           }
@@ -828,12 +740,7 @@ export class Game {
     }
 
     if (this.roundArrays && this.roundContainer && this.continueButton) {
-      this.startGame(
-        this.roundArrays,
-        this.roundContainer,
-        state.lineNumber,
-        this.continueButton,
-      )
+      this.startGame(this.roundArrays, this.roundContainer, state.lineNumber)
 
       const target = document.getElementById(state.lineNumber.toString())
       if (target) {
@@ -873,9 +780,9 @@ export class Game {
         this.picture.style.backgroundBlendMode = 'saturation'
         createImagePieces(
           this.picture,
-          this.roundContainer,
           this.roundArrays,
           this.array,
+          state.backgroundUrl
         )
 
         this.updateLine()
@@ -886,7 +793,10 @@ export class Game {
     if (this.header.levelSelect) {
       this.header.levelSelect.value = `${state.level}`
     }
-    if (this.audio && !state.isPlaying) {
+    if (this.audio) {
+      if (state.isPlaying) {
+        this.audio.pause()
+      }
       this.audio.src = 'newround2.mp3'
       this.audio.play()
     }
@@ -903,9 +813,11 @@ export class Game {
     this.updateRound()
 
     if (this.audio) {
+      if (state.isPlaying === true) {
+        this.audio.pause()
+      }
       state.isPlaying = true
       const newTrack = 'newlevel.mp3'
-      this.audio.pause()
       this.audio.src = newTrack
       this.audio.play()
       state.isPlaying = false
@@ -955,23 +867,53 @@ export class Game {
   saveUserData() {
     localStorage.setItem('catPuzzleUserData', JSON.stringify(this.userData))
   }
-}
-interface UserData {
-  lineNumber: number
-  round: number
-  level: number
-  autocomplete: boolean
-}
 
-interface UserStats {
-  level: number
-  round: number
-  author: string
-  name: string
-  year: string
-  stats: StatsData
-}
+  handleElClick(
+    el: HTMLElement,
+    source: HTMLElement,
+    target: HTMLElement,
+    direction: number
+  ) {
+    if (
+      target.children.length === 0 ||
+      allChildrenHaveClass(target, 'temp-el')
+    ) {
+      // если строка, куда переношу эл, заполнена только временными элементами
+      target.innerHTML = ''
+    }
+    const elWidth = el.style.width
+    const elHeight = el.style.height
+    const tempEl = this.createTemp(elWidth, elHeight)
+    source.append(tempEl)
+    source.insertBefore(tempEl, el)
+    insertElBeforeTempEl(target, elWidth, el)
+    el.style.top = `${Number.parseInt(el.style.height, 10) * (10 - state.lineNumber + 1) * direction}px`
+    el.getBoundingClientRect()
+    el.style.top = '0px'
+  }
 
-interface StatsData {
-  [key: string]: boolean | null
+  dropHandler(e: DragEvent, className: string) {
+    e.preventDefault()
+    if (e.dataTransfer && e.target && e.target instanceof HTMLElement) {
+      const id = e.dataTransfer.getData('text')
+      const draggableElement = document.getElementById(id)
+      const dropzone = e.target
+
+      if (
+        draggableElement &&
+        dropzone &&
+        draggableElement.parentElement &&
+        dropzone.parentElement
+      ) {
+        const lineData = draggableElement.dataset.line
+        if (
+          dropzone.classList.contains(className) &&
+          state.lineNumber === Number(lineData) //  если это правильная строка
+        ) {
+          dropzone.append(draggableElement)
+          this.verifyChildrenLength()
+        }
+      }
+    }
+  }
 }

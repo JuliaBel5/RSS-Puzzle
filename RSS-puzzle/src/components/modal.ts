@@ -46,7 +46,7 @@ export class Modal {
     this.modalButton = createElement(
       'button',
       'modal-button',
-      'Return to the game',
+      'Return to the game'
     )
     this.modalButton.addEventListener('click', () => {
       this.audio.src = button
