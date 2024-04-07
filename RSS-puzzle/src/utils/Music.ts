@@ -1,7 +1,6 @@
-/* export class Music {
-  if (localStorage.getItem('julMuted'): string) {
-  static isMuted = JSON.parse(localStorage.getItem('julMuted')) ?? false
-  }
+export class Music {
+  static isMuted = false
+
   audio: HTMLAudioElement
   path: string
 
@@ -27,7 +26,7 @@
     }
   }
 
-  play(soundFile) {
+  play(soundFile: string) {
     if (Music.isMuted) return
 
     this.reset()
@@ -52,4 +51,3 @@
     this.audio.currentTime = 0
   }
 }
-*/

@@ -36,7 +36,7 @@ export class Validation {
       this.toast.bindConfirmButton(this.logout)
       if (this.user) {
         this.game = new Game(this.user)
-        this.game.header.bindLogout(this.confirm)
+        this.game.gameView.header.bindLogout(this.confirm)
       }
     } else {
       this.login = new Login()
@@ -188,9 +188,9 @@ export class Validation {
     localStorage.removeItem('catPuzzleUser')
     localStorage.removeItem('catPuzzleUserData')
 
-    if (this.game && this.game.gameArea && this.game.header) {
-      this.game.gameArea.remove()
-      this.game.header.remove()
+    if (this.game && this.game.gameView.gameArea && this.game.gameView.header) {
+      this.game.gameView.gameArea.remove()
+      this.game.gameView.header.remove()
     }
     if (this.start && this.start.gameArea && this.header) {
       this.start.user = ''

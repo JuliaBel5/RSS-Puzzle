@@ -1,5 +1,10 @@
 import { createElement } from './createElement'
 
+
+export function isElementImage(element: HTMLImageElement) {
+  return element instanceof HTMLImageElement;
+ }
+
 export function allChildrenHaveClass(
   container: HTMLElement,
   className: string

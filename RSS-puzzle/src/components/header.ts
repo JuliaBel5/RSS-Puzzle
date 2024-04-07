@@ -82,7 +82,7 @@ export class Header {
 
     // second container for the icons
     const iconContainer = createElement('div', 'icon-container')
-    const icons: HTMLElement[] = []
+    const icons: HTMLImageElement[] = []
     const tipIcons = [
       { id: 'backgroundTip', label: 'Background Tip' },
       { id: 'audioTip', label: 'Audio Tip' },
