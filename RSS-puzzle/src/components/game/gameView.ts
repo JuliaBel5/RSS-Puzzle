@@ -1,21 +1,21 @@
-import { state } from "../../main";
-import { createElement } from "../../utils/createElement";
-import { Music } from "../../utils/music";
-import { Header } from "../header";
-
+import { state } from '../../main'
+import { createElement } from '../../utils/createElement'
+import { Music } from '../../utils/music'
+import { Header } from '../header'
+type HandlerFunction = () => void
 export class GameView {
-  gameArea: HTMLDivElement;
-  header: Header;
-  continueButton: any;
-  roundContainer: HTMLDivElement | undefined;
-  autoCompleteButton: HTMLButtonElement | undefined;
-  catElement: HTMLImageElement | undefined;
-  translationContainer: HTMLDivElement | undefined;
-  audioElement: HTMLImageElement | undefined;
-  game: HTMLDivElement | undefined;
-  audio: Music | undefined;
-  settingsContainer: any;
-  picture: HTMLDivElement  | undefined;
+  gameArea: HTMLDivElement
+  header: Header
+  continueButton: any
+  roundContainer: HTMLDivElement | undefined
+  autoCompleteButton: HTMLButtonElement | undefined
+  catElement: HTMLImageElement | undefined
+  translationContainer: HTMLDivElement | undefined
+  audioElement: HTMLImageElement | undefined
+  game: HTMLDivElement | undefined
+  audio: Music | undefined
+  settingsContainer: any
+  picture: HTMLDivElement | undefined
 
   constructor() {
     this.gameArea = createElement('div', 'gamearea')
@@ -23,18 +23,17 @@ export class GameView {
     this.header.init()
     document.body.append(this.gameArea)
     this.createSettings()
-
   }
   createSettings() {
     this.game = createElement('div', 'game', '')
-        this.audio = new Music()
-       
+    this.audio = new Music()
+
     this.translationContainer = createElement(
       'div',
       'translation-container',
       ''
     )
-  
+
     this.settingsContainer = createElement('div', 'settings-container', '')
     this.audioElement = createElement('img', 'mini-audio0')
     this.audioElement.src = 'audioTip1.png'
@@ -69,19 +68,13 @@ export class GameView {
     )
     this.game.append(this.settingsContainer)
     this.gameArea.append(this.game)
-    this.continueButton = createElement(
-      'button',
-      'continue',
-      'Check',
-      'check'
-    )
+    this.continueButton = createElement('button', 'continue', 'Check', 'check')
     this.autoCompleteButton = createElement(
       'button',
       'continue',
       'Help me',
       'autocomplete'
     )
-  
     this.roundContainer = createElement(
       'div',
       'round-container',
@@ -95,7 +88,20 @@ export class GameView {
       this.autoCompleteButton,
       this.continueButton
     )
-  
-   }
+    this.translationContainer.style.visibility = 'visible'
+  }
 
+  bindContinueButton = (handler: HandlerFunction): void => {
+    this.continueButton.addEventListener('click', () => {
+      handler()
+    })
+  }
+
+  bindAutocompleteButton = (handler: HandlerFunction): void => {
+    if (this.autoCompleteButton) {
+      this.autoCompleteButton.addEventListener('click', () => {
+        handler()
+      })
+    }
+  }
 }

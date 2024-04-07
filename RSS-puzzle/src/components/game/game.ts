@@ -1,4 +1,3 @@
-
 import { state } from '../../main'
 import { createElement } from '../../utils/createElement'
 import { createImagePieces, ImagePieceData } from '../../utils/createPieces'
@@ -41,8 +40,7 @@ export class Game {
     this.user = user
     this.gameView = new GameView()
     this.stats = new Stats(this.gameView.gameArea)
-     document.body.append(this.gameView.gameArea)
-
+    document.body.append(this.gameView.gameArea)
 
     this.userData = {
       lineNumber: 1,
@@ -58,197 +56,35 @@ export class Game {
     }
   }
 
- 
   async init(): Promise<void> {
     await this.useLevelData()
-
+    this.array = []
+    this.roundArrays = []
     if (this.level) {
-      this.array = this.level.transformedData[state.round - 1].words
+      this.setLevelData()
 
-      state.backgroundUrl = `url('https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/images/${this.level.transformedData[state.round - 1].imageSRC}')`
-      // `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
-      state.audioSrc = `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
-      // `${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
-      
-   if (this.gameView.translationContainer) {
-      this.gameView.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
-   }
-
-      if ( this.gameView.picture){
-      this.gameView.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
-      this.gameView.picture.style.backgroundBlendMode = 'saturation'
+      if (
+        (this.gameView.picture,
+        this.gameView.roundContainer)
+      ) {
+        createImagePieces(
+          this.gameView.picture,
+          this.roundArrays,
+          this.array,
+          state.backgroundUrl
+        )
+        this.startGame(
+          this.roundArrays,
+          this.gameView.roundContainer,
+          state.lineNumber
+        )
+        this.setBinds()
       }
- 
-
-if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
-
-  this.gameView.continueButton.addEventListener('click', () => {
-    const target = document.getElementById(`${state.lineNumber}`)
-    if (target && this.gameView.continueButton) {
-        if (this.gameView.continueButton.textContent === 'Check') {
-        this.verifyLine(target, this.gameView.continueButton)
-      } else if (this.gameView.continueButton.textContent === 'Continue') {
-        this.continue(state.lineNumber, state.round, state.level)
-      }
-    }
-  })
-
-      this.gameView.autoCompleteButton.addEventListener('click', () => {
-        if (this.gameView.autoCompleteButton?.textContent === 'Help me') {
-          const target = document.getElementById(`${state.lineNumber}`)
-          const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
-          const children = Array.from(document.querySelectorAll(selector))
-          if (target && this.gameView.continueButton) {
-            const elementsWithIds = Array.from(children).map((child) => ({
-              element: child,
-              idNum: Number.parseInt(child.id.split('-')[1], 10)
-            }))
-            elementsWithIds.sort((a, b) => a.idNum - b.idNum)
-
-            target.innerHTML = ''
-            unableButton(this.gameView.continueButton, 'disabled2', 'continue')
-            disableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
-            elementsWithIds.forEach((item) => {
-              target.append(item.element)
-            })
-            if (this.gameView.audio) {
-              this.gameView.audio.play('Bibip.mp3')
-            }
-            this.userData.autocomplete = true
-            this.saveUserData()
-            state.autocomplete = true
-          }
-        } else if (this.gameView.autoCompleteButton && this.gameView.autoCompleteButton.textContent === 'Results') {
-          if (this.userStats && this.stats && this.gameView.audio) {
-            const statsContent = `${this.userStats.name}, ${this.userStats.author}, ${this.userStats.year}`
-            this.gameView.audio.play('stats.mp3')
-            this.stats.showStats(
-              `Level ${state.level} Round ${state.round} results:`,
-              statsContent
-            )
-            if (this.stats.miniPicture) {
-              this.stats.miniPicture.style.backgroundImage = state.backgroundUrl
-            }
-
-            Object.entries(this.userStats.stats).forEach(
-              ([lineNumber, autocompleteStatus]) => {
-                if (this.level) {
-                  const levelAudio = new Audio(
-                    `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[Number(lineNumber) - 1]}`
-                  )
-
-                  const iconElement = createElement('img', 'mini-audio')
-                  iconElement.src = 'audioTip1.png'
-                  iconElement.addEventListener('click', () => {
-                    levelAudio.play()
-                  })
-
-                  const levelElement = createElement(
-                    'div',
-                    'level-line',
-                    `Line ${lineNumber}: ${autocompleteStatus ? 'with help' : 'without help'}`
-                  )
-
-                  levelElement.append(iconElement)
-                  if (
-                    this.stats &&
-                    autocompleteStatus === true &&
-                    this.stats.helpedLinesTitleContent
-                  ) {
-                    this.stats.helpedLinesTitleContent.append(levelElement)
-                  } else if (
-                    this.stats &&
-                    autocompleteStatus === false &&
-                    this.stats.completedLinesTitleContent
-                  ) {
-                    this.stats.completedLinesTitleContent.append(levelElement)
-                  }
-                }
-              }
-            )
-          }
-        }
-      })
-    }
-      this.roundArrays = []
-      if ( this.gameView.picture,this.gameView.roundContainer, this.gameView.translationContainer) {
-      
-      createImagePieces(
-        this.gameView.picture,
-        this.roundArrays,
-        this.array,
-        state.backgroundUrl
-      )
-      this.startGame(
-        this.roundArrays,
-       this.gameView.roundContainer,
-        state.lineNumber
      
-      )
-      
-      this.gameView.header.bindTranslationTipOn(this.translationTipOn)
-      this.gameView.header.bindAudioTipOn(this.audioTipOn)
-      this.gameView.header.bindBackgroundTipOn(this.backgroundTipOn)
-      this.gameView.header.bindRoundSelect(this.roundSelect)
-      this.gameView.header.bindLevelSelect(this.levelSelect)
-      this.gameView.translationContainer.style.visibility = 'visible'
-      }
-      this.userStats = {
-        level: state.level,
-        round: state.round,
-        author: this.level.transformedData[state.round - 1].author,
-        name: this.level.transformedData[state.round - 1].name,
-        year: this.level.transformedData[state.round - 1].year,
-        stats: {
-          1: null,
-          2: null,
-          3: null,
-          4: null,
-          5: null,
-          6: null,
-          7: null,
-          8: null,
-          9: null,
-          10: null
-        }
-      }
-      if (this.gameView.header.levelSelect && this.gameView.header.roundSelect) {
-        this.gameView.header.levelSelect.value = state.level.toString()
-        this.gameView.header.roundSelect.value = state.round.toString()
-      }
     }
 
-    const mediaQueryAbove1000 = window.matchMedia('(min-width: 1001px)')
-    const mediaQueryBelow1000 = window.matchMedia('(max-width: 999px)')
-
-    const handleMediaQueryChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        this.updateLevel()
-      }
-    }
-
-    mediaQueryAbove1000.addEventListener('change', handleMediaQueryChange)
-    mediaQueryBelow1000.addEventListener('change', handleMediaQueryChange)
-
-    if (mediaQueryAbove1000.matches) {
-      this.updateLevel()
-    }
-
-    if (mediaQueryBelow1000.matches) {
-      this.updateLevel()
-    }
-    document.addEventListener('lineIsCompleted', () => {
-      if (this.gameView.continueButton && this.gameView.autoCompleteButton) {
-        unableButton(this.gameView.continueButton, 'disabled2', 'continue')
-        unableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
-      }
-    })
-
-    document.addEventListener('lineIsNotCompleted', () => {
-      if (this.gameView.continueButton && this.gameView.autoCompleteButton) {
-        disableButton(this.gameView.continueButton, 'disabled2', 'continue')
-      }
-    })
+    this.setMediaQueries()
+    this.setEventListeners()
   }
 
   private startGame = (
@@ -258,83 +94,86 @@ if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
     // continueButton: HTMLElement
   ) => {
     if (roundContainer) {
-    roundContainer.innerHTML = ''
-    
-    const target = document.getElementById(lineNumber.toString())
-    const gameArrLength = roundArrays[lineNumber - 1].length
-    const gameArrIndexes: number[] = Array.from(
-      { length: gameArrLength },
-      (_, index) => index
-    )
-    const lineNumberArr = Array.from(
-      { length: state.lineNumber - 1 },
-      (_, i) => 1 + i
-    )
-    lineNumberArr.forEach((num) => {
-      const selector = `.line-container[data-line="${num}"]`
-      const resultContainer = document.querySelector(selector)
-      if (resultContainer instanceof HTMLElement) {
-        resultContainer.style.display = 'flex'
-        resultContainer.style.border = ''
-        const childrenArray = Array.from(resultContainer.children)
-        childrenArray.forEach((child) => {
-          if (child instanceof HTMLElement) {
-            child.style.backgroundImage = state.backgroundUrl
-          }
-        })
-      }
-    })
-    const shuffledGameIndArr = shuffleAndCheck(gameArrIndexes)
-    shuffledGameIndArr.forEach((item) => {
-      if (target) {
-        target.style.display = 'flex'
-        const el = roundArrays[lineNumber - 1][item]
-        //  el.style.background = `url('brown-background.jpg')`
-        el.style.backgroundImage = state.backgroundUrl
-        target.style.border = ''
-        roundContainer.append(el)
+      roundContainer.innerHTML = ''
 
-        el.addEventListener('click', () => {
-          if (roundContainer.contains(el)) {
-            // если el в строке раунда
-            this.handleElClick(el, roundContainer, target, 1)
-          } else {
-            // если el в строке картинки
-            this.handleElClick(el, target, roundContainer, -1)
-          }
-          this.verifyChildrenLength()
-        })
-      }
-    })
-    roundContainer.addEventListener('drop', (e): void => {
-      this.dropHandler(e, 'round-container')
-    })
-    roundContainer.addEventListener('dragover', (e) => {
-      e.preventDefault()
-      if (e.dataTransfer) {
-        e.dataTransfer.dropEffect = 'move'
-      }
-    })
-    if (target) {
-      target.addEventListener('drop', (e): void => {
-        this.dropHandler(e, 'line-container')
+      const target = document.getElementById(lineNumber.toString())
+      const gameArrLength = roundArrays[lineNumber - 1].length
+      const gameArrIndexes: number[] = Array.from(
+        { length: gameArrLength },
+        (_, index) => index
+      )
+      const lineNumberArr = Array.from(
+        { length: state.lineNumber - 1 },
+        (_, i) => 1 + i
+      )
+      lineNumberArr.forEach((num) => {
+        const selector = `.line-container[data-line="${num}"]`
+        const resultContainer = document.querySelector(selector)
+        if (resultContainer instanceof HTMLElement) {
+          resultContainer.style.display = 'flex'
+          resultContainer.style.border = ''
+          const childrenArray = Array.from(resultContainer.children)
+          childrenArray.forEach((child) => {
+            if (child instanceof HTMLElement) {
+              child.style.backgroundImage = state.backgroundUrl
+            }
+          })
+        }
       })
-      target.addEventListener('dragover', (e) => {
+      const shuffledGameIndArr = shuffleAndCheck(gameArrIndexes)
+      shuffledGameIndArr.forEach((item) => {
+        if (target) {
+          target.style.display = 'flex'
+          const el = roundArrays[lineNumber - 1][item]
+          //  el.style.background = `url('brown-background.jpg')`
+          el.style.backgroundImage = state.backgroundUrl
+          target.style.border = ''
+          roundContainer.append(el)
+
+          el.addEventListener('click', () => {
+            if (roundContainer.contains(el)) {
+              // если el в строке раунда
+              this.handleElClick(el, roundContainer, target, 1)
+            } else {
+              // если el в строке картинки
+              this.handleElClick(el, target, roundContainer, -1)
+            }
+            this.verifyChildrenLength()
+          })
+        }
+      })
+      roundContainer.addEventListener('drop', (e): void => {
+        this.dropHandler(e, 'round-container')
+      })
+      roundContainer.addEventListener('dragover', (e) => {
         e.preventDefault()
         if (e.dataTransfer) {
           e.dataTransfer.dropEffect = 'move'
         }
       })
+      if (target) {
+        target.addEventListener('drop', (e): void => {
+          this.dropHandler(e, 'line-container')
+        })
+        target.addEventListener('dragover', (e) => {
+          e.preventDefault()
+          if (e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move'
+          }
+        })
+      }
     }
   }
-}
-
 
   verifyChildrenLength() {
-    if (this.gameView.roundContainer && this.gameView.continueButton && this.gameView.autoCompleteButton) {
+    if (
+      this.gameView.roundContainer &&
+      this.gameView.continueButton &&
+      this.gameView.autoCompleteButton
+    ) {
       if (
         allChildrenHaveClass(this.gameView.roundContainer, 'temp-el') ||
-       this.gameView.roundContainer.children.length === 0
+        this.gameView.roundContainer.children.length === 0
       ) {
         unableButton(this.gameView.continueButton, 'disabled2', 'continue')
         unableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
@@ -393,7 +232,7 @@ if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
     if (this.gameView.roundContainer) {
       const childrenArray1 = Array.from(this.gameView.roundContainer.children)
       if (
-       this.gameView.roundContainer.children.length > 0 &&
+        this.gameView.roundContainer.children.length > 0 &&
         childrenArray1.every((child) => !child.classList.contains('temp-el'))
       ) {
         isOrderCorrect = false
@@ -460,13 +299,25 @@ if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
 
             state.autocomplete = false
           }
-          if (this.gameView.autoCompleteButton && this.gameView.audioElement && this.gameView.catElement) {
+          if (
+            this.gameView.autoCompleteButton &&
+            this.gameView.audioElement &&
+            this.gameView.catElement
+          ) {
             this.gameView.autoCompleteButton.textContent = 'Results'
-            unableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
+            unableButton(
+              this.gameView.autoCompleteButton,
+              'disabled2',
+              'continue'
+            )
             this.gameView.audioElement.style.display = 'none'
             this.gameView.catElement.style.display = 'inline-block'
           }
-          if (this.gameView.roundContainer && this.level && this.gameView.translationContainer) {
+          if (
+            this.gameView.roundContainer &&
+            this.level &&
+            this.gameView.translationContainer
+          ) {
             this.gameView.translationContainer.style.visibility = 'visible'
             this.gameView.translationContainer.textContent = `${
               this.level.transformedData[state.round - 1].name
@@ -506,7 +357,10 @@ if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
       this.gameView.autoCompleteButton.textContent = 'Help me'
       this.updateRound()
     } else if (round === state.roundsCount && level <= 5) {
-      if (this.gameView.header.roundSelect && this.gameView.header.levelSelect) {
+      if (
+        this.gameView.header.roundSelect &&
+        this.gameView.header.levelSelect
+      ) {
         changeOptionColor(this.gameView.header.roundSelect, state.round)
         changeOptionColor(this.gameView.header.levelSelect, state.level)
       }
@@ -514,7 +368,10 @@ if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
       state.round = 1
       this.updateLevel()
     } else {
-      if (this.gameView.header.roundSelect && this.gameView.header.levelSelect) {
+      if (
+        this.gameView.header.roundSelect &&
+        this.gameView.header.levelSelect
+      ) {
         changeOptionColor(this.gameView.header.roundSelect, state.round)
         changeOptionColor(this.gameView.header.levelSelect, state.level)
       }
@@ -619,17 +476,26 @@ if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
       this.gameView.autoCompleteButton.textContent = 'Help me'
       this.gameView.continueButton.textContent = 'Check'
     }
-    if (this.roundArrays &&this.gameView.roundContainer && this.gameView.continueButton) {
-      this.startGame(this.roundArrays,this.gameView.roundContainer, state.lineNumber)
+    if (
+      this.roundArrays &&
+      this.gameView.roundContainer &&
+      this.gameView.continueButton
+    ) {
+      this.startGame(
+        this.roundArrays,
+        this.gameView.roundContainer,
+        state.lineNumber
+      )
       const target = document.getElementById(state.lineNumber.toString())
       if (target) {
         target.style.border = ''
       }
     }
-    if ( this.gameView.header.backgroundTip instanceof HTMLImageElement ) {
+    if (this.gameView.header.backgroundTip instanceof HTMLImageElement) {
       this.gameView.header.backgroundTip.src = 'backgroundTip1.png'
     }
-    if (this.gameView.header.translationTip instanceof HTMLImageElement &&
+    if (
+      this.gameView.header.translationTip instanceof HTMLImageElement &&
       this.gameView.translationContainer
     ) {
       this.gameView.header.translationTip.src = 'translationTip1.png'
@@ -783,5 +649,184 @@ if  (this.gameView.autoCompleteButton &&  this.gameView.continueButton) {
         }
       }
     }
+  }
+  renderStatsInfo() {
+    if (this.userStats && this.stats && this.gameView.audio) {
+      const statsContent = `${this.userStats.name}, ${this.userStats.author}, ${this.userStats.year}`
+      this.gameView.audio.play('stats.mp3')
+      this.stats.showStats(
+        `Level ${state.level} Round ${state.round} results:`,
+        statsContent
+      )
+      if (this.stats.miniPicture) {
+        this.stats.miniPicture.style.backgroundImage = state.backgroundUrl
+      }
+
+      Object.entries(this.userStats.stats).forEach(
+        ([lineNumber, autocompleteStatus]) => {
+          if (this.level) {
+            const levelAudio = new Audio(
+              `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[Number(lineNumber) - 1]}`
+            )
+
+            const iconElement = createElement('img', 'mini-audio')
+            iconElement.src = 'audioTip1.png'
+            iconElement.addEventListener('click', () => {
+              levelAudio.play()
+            })
+
+            const levelElement = createElement(
+              'div',
+              'level-line',
+              `Line ${lineNumber}: ${autocompleteStatus ? 'with help' : 'without help'}`
+            )
+
+            levelElement.append(iconElement)
+            if (
+              this.stats &&
+              autocompleteStatus === true &&
+              this.stats.helpedLinesTitleContent
+            ) {
+              this.stats.helpedLinesTitleContent.append(levelElement)
+            } else if (
+              this.stats &&
+              autocompleteStatus === false &&
+              this.stats.completedLinesTitleContent
+            ) {
+              this.stats.completedLinesTitleContent.append(levelElement)
+            }
+          }
+        }
+      )
+    }
+  }
+  continueButtonClickHandler = () => {
+    const target = document.getElementById(`${state.lineNumber}`)
+    if (target && this.gameView.continueButton) {
+      if (this.gameView.continueButton.textContent === 'Check') {
+        this.verifyLine(target, this.gameView.continueButton)
+      } else if (this.gameView.continueButton.textContent === 'Continue') {
+        this.continue(state.lineNumber, state.round, state.level)
+      }
+    }
+  }
+  autocompleteButtonClickHandler = () => {
+    if (this.gameView.autoCompleteButton?.textContent === 'Help me') {
+      const target = document.getElementById(`${state.lineNumber}`)
+      const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
+      const children = Array.from(document.querySelectorAll(selector))
+      if (target && this.gameView.continueButton) {
+        const elementsWithIds = Array.from(children).map((child) => ({
+          element: child,
+          idNum: Number.parseInt(child.id.split('-')[1], 10)
+        }))
+        elementsWithIds.sort((a, b) => a.idNum - b.idNum)
+
+        target.innerHTML = ''
+        unableButton(this.gameView.continueButton, 'disabled2', 'continue')
+        disableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
+        elementsWithIds.forEach((item) => {
+          target.append(item.element)
+        })
+        if (this.gameView.audio) {
+          this.gameView.audio.play('Bibip.mp3')
+        }
+        this.userData.autocomplete = true
+        this.saveUserData()
+        state.autocomplete = true
+      }
+    } else if (
+      this.gameView.autoCompleteButton &&
+      this.gameView.autoCompleteButton.textContent === 'Results'
+    ) {
+      this.renderStatsInfo()
+    }
+  }
+  setMediaQueries = () => {
+    const mediaQueryAbove1000 = window.matchMedia('(min-width: 1001px)')
+    const mediaQueryBelow1000 = window.matchMedia('(max-width: 999px)')
+
+    const handleMediaQueryChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        this.updateLevel()
+      }
+    }
+
+    mediaQueryAbove1000.addEventListener('change', handleMediaQueryChange)
+    mediaQueryBelow1000.addEventListener('change', handleMediaQueryChange)
+
+    if (mediaQueryAbove1000.matches) {
+      this.updateLevel()
+    }
+
+    if (mediaQueryBelow1000.matches) {
+      this.updateLevel()
+    }
+  }
+
+  setEventListeners = () => {
+    document.addEventListener('lineIsCompleted', () => {
+      if (this.gameView.continueButton && this.gameView.autoCompleteButton) {
+        unableButton(this.gameView.continueButton, 'disabled2', 'continue')
+        unableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
+      }
+    })
+
+    document.addEventListener('lineIsNotCompleted', () => {
+      if (this.gameView.continueButton && this.gameView.autoCompleteButton) {
+        disableButton(this.gameView.continueButton, 'disabled2', 'continue')
+      }
+    })
+  }
+  setLevelData = () => {
+    if (this.level) {
+      this.userStats = {
+        level: state.level,
+        round: state.round,
+        author: this.level.transformedData[state.round - 1].author,
+        name: this.level.transformedData[state.round - 1].name,
+        year: this.level.transformedData[state.round - 1].year,
+        stats: {
+          1: null,
+          2: null,
+          3: null,
+          4: null,
+          5: null,
+          6: null,
+          7: null,
+          8: null,
+          9: null,
+          10: null
+        }
+      }
+      this.array = this.level.transformedData[state.round - 1].words
+      state.backgroundUrl = `url('https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/images/${this.level.transformedData[state.round - 1].imageSRC}')`
+      // `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
+      state.audioSrc = `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+      // `${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+
+      if (this.gameView.translationContainer) {
+        this.gameView.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
+      }
+
+      if (this.gameView.picture) {
+        this.gameView.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
+        this.gameView.picture.style.backgroundBlendMode = 'saturation'
+      }
+    }
+    if (this.gameView.header.levelSelect && this.gameView.header.roundSelect) {
+      this.gameView.header.levelSelect.value = state.level.toString()
+      this.gameView.header.roundSelect.value = state.round.toString()
+    } 
+  }
+
+  setBinds = () => {
+    this.gameView.bindAutocompleteButton(this.autocompleteButtonClickHandler)
+    this.gameView.bindContinueButton(this.continueButtonClickHandler)
+    this.gameView.header.bindTranslationTipOn(this.translationTipOn)
+    this.gameView.header.bindAudioTipOn(this.audioTipOn)
+    this.gameView.header.bindBackgroundTipOn(this.backgroundTipOn)
+    this.gameView.header.bindRoundSelect(this.roundSelect)
+    this.gameView.header.bindLevelSelect(this.levelSelect)
   }
 }
