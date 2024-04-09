@@ -12,13 +12,14 @@ export function createImagePieces(
   roundArrays: HTMLElement[][],
   list: ImagePieceData[],
   backgroundImageUrl = 'brown-background.jpg'
-) {
+): HTMLElement[] {
+  let containerArr: HTMLElement[] = []
   let y = 0
   const pictureElement = container
   if (pictureElement instanceof HTMLElement) {
     const pictureWidth = pictureElement.offsetWidth
     const pictureHeight = pictureElement.offsetHeight
-
+    
     const fragment = document.createDocumentFragment()
 
     list.forEach((item, index) => {
@@ -33,6 +34,7 @@ export function createImagePieces(
       lineContainer.setAttribute('draggable', 'true')
       lineContainer.dataset.line = lineNumber.toString()
       const lineArr: HTMLElement[] = []
+      
       const totalLetters = item.letters.reduce(
         (acc, letters) => acc + letters.length,
         0
@@ -89,7 +91,9 @@ export function createImagePieces(
       lineContainer.style.top = `${y}px`
       lineContainer.style.height = `${pictureHeight / 10}px`
       roundArrays.push(lineArr)
+      containerArr.push(lineContainer)
       y += pictureHeight / 10
     })
   }
+  return containerArr
 }

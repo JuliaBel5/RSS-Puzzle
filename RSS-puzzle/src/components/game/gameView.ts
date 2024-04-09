@@ -5,29 +5,27 @@ import { Header } from '../header'
 type HandlerFunction = () => void
 export class GameView {
   gameArea: HTMLDivElement
-  header: Header
-  continueButton: any
+  header: Header = new Header()
+  continueButton: HTMLButtonElement | undefined
   roundContainer: HTMLDivElement | undefined
   autoCompleteButton: HTMLButtonElement | undefined
   catElement: HTMLImageElement | undefined
   translationContainer: HTMLDivElement | undefined
   audioElement: HTMLImageElement | undefined
   game: HTMLDivElement | undefined
-  audio: Music | undefined
-  settingsContainer: any
+  audio: Music = new Music()
+  settingsContainer: HTMLDivElement | undefined
   picture: HTMLDivElement | undefined
 
   constructor() {
     this.gameArea = createElement('div', 'gamearea')
-    this.header = new Header()
     this.header.init()
     document.body.append(this.gameArea)
     this.createSettings()
   }
   createSettings() {
     this.game = createElement('div', 'game', '')
-    this.audio = new Music()
-
+    
     this.translationContainer = createElement(
       'div',
       'translation-container',
@@ -38,28 +36,21 @@ export class GameView {
     this.audioElement = createElement('img', 'mini-audio0')
     this.audioElement.src = 'audioTip1.png'
     this.audioElement.addEventListener('click', () => {
-      if (this.audio) {
-        this.audio.play(state.audioSrc)
+           this.audio.play(state.audioSrc)
         if (this.audioElement instanceof HTMLImageElement) {
           this.audioElement.src = 'audioTipDis.png'
           this.audio.audio.addEventListener('ended', () => {
-            if (
-              this.audioElement &&
-              this.audioElement instanceof HTMLImageElement
-            ) {
+            if (this.audioElement instanceof HTMLImageElement) {
               this.audioElement.src = 'audioTip1.png'
             }
           })
         }
-      }
     })
     this.catElement = createElement('img', 'mini-cat')
     this.catElement.src = 'cat6a.png'
     this.catElement.style.display = 'none'
     this.catElement.addEventListener('click', () => {
-      if (this.audio) {
-        this.audio.play('meow2.mp3')
-      }
+    this.audio.play('meow2.mp3')
     })
     this.settingsContainer.append(
       this.catElement,
@@ -92,16 +83,14 @@ export class GameView {
   }
 
   bindContinueButton = (handler: HandlerFunction): void => {
-    this.continueButton.addEventListener('click', () => {
+    this.continueButton?.addEventListener('click', () => {
       handler()
     })
   }
 
   bindAutocompleteButton = (handler: HandlerFunction): void => {
-    if (this.autoCompleteButton) {
-      this.autoCompleteButton.addEventListener('click', () => {
+      this.autoCompleteButton?.addEventListener('click', () => {
         handler()
       })
     }
-  }
 }

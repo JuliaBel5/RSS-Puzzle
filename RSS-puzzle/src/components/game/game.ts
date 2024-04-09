@@ -34,11 +34,11 @@ export class Game {
 
   userStats: UserStats | undefined
 
-  gameView: GameView
+  gameView: GameView = new GameView()
+  containerArr: HTMLElement[] | undefined
 
   constructor(user: string) {
     this.user = user
-    this.gameView = new GameView()
     this.stats = new Stats(this.gameView.gameArea)
     document.body.append(this.gameView.gameArea)
 
@@ -67,7 +67,7 @@ export class Game {
         (this.gameView.picture,
         this.gameView.roundContainer)
       ) {
-        createImagePieces(
+       this.containerArr = createImagePieces(
           this.gameView.picture,
           this.roundArrays,
           this.array,
@@ -91,12 +91,14 @@ export class Game {
     roundArrays: HTMLElement[][],
     roundContainer: HTMLElement | undefined,
     lineNumber: number
-    // continueButton: HTMLElement
   ) => {
     if (roundContainer) {
       roundContainer.innerHTML = ''
 
-      const target = document.getElementById(lineNumber.toString())
+   if (!this.containerArr) {
+    return
+   }
+    const target = this.containerArr[state.lineNumber - 1]
       const gameArrLength = roundArrays[lineNumber - 1].length
       const gameArrIndexes: number[] = Array.from(
         { length: gameArrLength },
@@ -107,25 +109,13 @@ export class Game {
         (_, i) => 1 + i
       )
       lineNumberArr.forEach((num) => {
-        const selector = `.line-container[data-line="${num}"]`
-        const resultContainer = document.querySelector(selector)
-        if (resultContainer instanceof HTMLElement) {
-          resultContainer.style.display = 'flex'
-          resultContainer.style.border = ''
-          const childrenArray = Array.from(resultContainer.children)
-          childrenArray.forEach((child) => {
-            if (child instanceof HTMLElement) {
-              child.style.backgroundImage = state.backgroundUrl
-            }
-          })
-        }
+        this.setElBackground(num)
       })
       const shuffledGameIndArr = shuffleAndCheck(gameArrIndexes)
       shuffledGameIndArr.forEach((item) => {
         if (target) {
           target.style.display = 'flex'
           const el = roundArrays[lineNumber - 1][item]
-          //  el.style.background = `url('brown-background.jpg')`
           el.style.backgroundImage = state.backgroundUrl
           target.style.border = ''
           roundContainer.append(el)
@@ -381,34 +371,26 @@ export class Game {
   }
 
   backgroundTipOn = (): void => {
-    const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
-    const target1 = Array.from(document.querySelectorAll(selector))
-
-    const childrenArray = target1
-
+      if (!this.gameView.game || !this.containerArr || !this.gameView.roundContainer) {
+      return
+    }
+   // const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
+ //   const target2 = Array.from(this.gameView.game.querySelectorAll(selector))
+ const piecesFromResultLine = Array.from(this.containerArr[state.lineNumber - 1].children)
+ const piecesFromRoundLine = Array.from(this.gameView.roundContainer.children)
+    const target = piecesFromResultLine.concat(piecesFromRoundLine)
+        
     if (this.gameView.header.backgroundTip instanceof HTMLImageElement) {
       if (state.backgroundTip) {
         this.gameView.header.backgroundTip.src = 'backgroundTipDis.png'
         state.backgroundTip = false
-        childrenArray.forEach((child) => {
-          if (
-            child instanceof HTMLElement &&
-            !child.classList.contains('temp-el')
-          ) {
-            child.style.backgroundImage = 'url("brown-background.jpg")'
-          }
-        })
+        this.changeElBackground(target, '') //'url("brown-background.jpg")'
+       
       } else {
         this.gameView.header.backgroundTip.src = 'backgroundTip1.png'
         state.backgroundTip = true
-        childrenArray.forEach((child) => {
-          if (
-            child instanceof HTMLElement &&
-            !child.classList.contains('temp-el')
-          ) {
-            child.style.backgroundImage = state.backgroundUrl
-          }
-        })
+        this.changeElBackground(target, state.backgroundUrl)
+       
       }
     }
   }
@@ -469,10 +451,8 @@ export class Game {
       this.gameView.audio.path = state.audioSrc
       state.translation = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
       this.gameView.translationContainer.textContent = state.translation
-      this.gameView.continueButton.classList.add('disabled2')
-      this.gameView.continueButton.classList.remove('continue')
-      this.gameView.autoCompleteButton.classList.remove('disabled2')
-      this.gameView.autoCompleteButton.classList.add('continue')
+      disableButton(this.gameView.continueButton, 'disabled2', 'continue')
+      unableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
       this.gameView.autoCompleteButton.textContent = 'Help me'
       this.gameView.continueButton.textContent = 'Check'
     }
@@ -486,7 +466,10 @@ export class Game {
         this.gameView.roundContainer,
         state.lineNumber
       )
-      const target = document.getElementById(state.lineNumber.toString())
+     if (!this.containerArr) {
+      return
+     }
+      const target = this.containerArr[state.lineNumber - 1]
       if (target) {
         target.style.border = ''
       }
@@ -518,7 +501,7 @@ export class Game {
         this.gameView.picture.innerHTML = ''
         this.gameView.picture.style.background = `linear-gradient(black, black), ${state.backgroundUrl}`
         this.gameView.picture.style.backgroundBlendMode = 'saturation'
-        createImagePieces(
+        this.containerArr = createImagePieces(
           this.gameView.picture,
           this.roundArrays,
           this.array,
@@ -534,7 +517,7 @@ export class Game {
     }
     if (this.gameView.audio) {
       if (state.isPlaying) {
-        this.gameView.audio.pause()
+        this.gameView.audio.stop()
       }
       this.gameView.audio.play('newround2.mp3')
     }
@@ -701,7 +684,10 @@ export class Game {
     }
   }
   continueButtonClickHandler = () => {
-    const target = document.getElementById(`${state.lineNumber}`)
+    if (!this.containerArr) {
+      return
+     }
+    const target = this.containerArr[state.lineNumber - 1]
     if (target && this.gameView.continueButton) {
       if (this.gameView.continueButton.textContent === 'Check') {
         this.verifyLine(target, this.gameView.continueButton)
@@ -712,10 +698,13 @@ export class Game {
   }
   autocompleteButtonClickHandler = () => {
     if (this.gameView.autoCompleteButton?.textContent === 'Help me') {
-      const target = document.getElementById(`${state.lineNumber}`)
-      const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
+     if (!this.containerArr || !this.gameView.roundContainer) {
+      return
+     }
+      const target = this.containerArr[state.lineNumber - 1]
+     const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
       const children = Array.from(document.querySelectorAll(selector))
-      if (target && this.gameView.continueButton) {
+         if (target && this.gameView.continueButton) {
         const elementsWithIds = Array.from(children).map((child) => ({
           element: child,
           idNum: Number.parseInt(child.id.split('-')[1], 10)
@@ -801,9 +790,9 @@ export class Game {
       }
       this.array = this.level.transformedData[state.round - 1].words
       state.backgroundUrl = `url('https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/images/${this.level.transformedData[state.round - 1].imageSRC}')`
-      // `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
+     // state.backgroundUrl = `url("/${this.level.transformedData[state.round - 1].imageSRC}")`
       state.audioSrc = `https://raw.githubusercontent.com/rolling-scopes-school/rss-puzzle-data/main/${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
-      // `${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
+       // state.audioSrc =`${this.level.transformedData[state.round - 1].audioSrc[state.lineNumber - 1]}`
 
       if (this.gameView.translationContainer) {
         this.gameView.translationContainer.textContent = `${this.level.transformedData[state.round - 1].translation[state.lineNumber - 1]}`
@@ -829,4 +818,36 @@ export class Game {
     this.gameView.header.bindRoundSelect(this.roundSelect)
     this.gameView.header.bindLevelSelect(this.levelSelect)
   }
+
+  setElBackground = (num: number) => {
+    const selector = `.line-container[data-line="${num}"]`
+    const resultContainer = document.querySelector(selector)
+    if (resultContainer instanceof HTMLElement) {
+      resultContainer.style.display = 'flex'
+      resultContainer.style.border = ''
+      const childrenArray = Array.from(resultContainer.children)
+      childrenArray.forEach((child) => {
+        if (child instanceof HTMLElement) {
+          child.style.backgroundImage = state.backgroundUrl
+        }
+      })
+    }
+  }
+
+  changeElBackground = (target: Element[], image: string) => {
+    const applyBackgroundChange = (element: Element) => {
+       if (element instanceof HTMLElement && !element.classList.contains('temp-el')) {
+         if (image) {
+           element.style.backgroundImage = image;
+         } else {
+           element.style.backgroundImage = image;
+           element.style.backgroundColor = `rgb(114,102,90)`;
+         }
+         // Apply the change to all children of the current element
+         Array.from(element.children).forEach(applyBackgroundChange);
+       }
+    };
+   
+    target.forEach(applyBackgroundChange);
+   }
 }
