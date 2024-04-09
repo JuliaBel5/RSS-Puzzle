@@ -262,14 +262,13 @@ export class Game {
         target.style.border = '2px solid green'
         childrenArray.forEach((child) => {
           if (child instanceof HTMLElement) {
-            child.style.backgroundImage = state.backgroundUrl
-            const backgroundPosition = child.getAttribute('background-position')
-            if (backgroundPosition !== null) {
-              child.style.background = state.backgroundUrl
-              child.style.backgroundPosition = backgroundPosition
-            }
+               child.style.backgroundImage = state.backgroundUrl;
+               const singleChild = child.firstElementChild;
+             if (singleChild instanceof HTMLElement) {
+                singleChild.style.backgroundImage = state.backgroundUrl;
+             }
           }
-        })
+         });
         if (this.gameView.audio) {
           this.gameView.audio.play('solution.wav')
         }
@@ -702,21 +701,34 @@ export class Game {
       return
      }
       const target = this.containerArr[state.lineNumber - 1]
-     const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
-      const children = Array.from(document.querySelectorAll(selector))
+   //  const selector = `[data-line ="${state.lineNumber}"]:not(.line-container)`
+    //  const children = Array.from(document.querySelectorAll(selector))
+      const piecesFromResultLine = Array.from(this.containerArr[state.lineNumber - 1].children)
+      const piecesFromRoundLine = Array.from(this.gameView.roundContainer.children)
+    const children = piecesFromResultLine.concat(piecesFromRoundLine)
          if (target && this.gameView.continueButton) {
-        const elementsWithIds = Array.from(children).map((child) => ({
-          element: child,
+        // const elementsWithIds = Array.from(children).map((child) => {
+          const elementsWithIds = children.map((child) => {
+          if (!child.classList.contains('temp-el')) {
+            return  { element: child,
           idNum: Number.parseInt(child.id.split('-')[1], 10)
-        }))
-        elementsWithIds.sort((a, b) => a.idNum - b.idNum)
+        }
+      }
+    })
+  
+    elementsWithIds.sort((a, b) => {
+      if (!a || !b) return 0; 
+      return a.idNum - b.idNum;
+     });
 
         target.innerHTML = ''
         unableButton(this.gameView.continueButton, 'disabled2', 'continue')
         disableButton(this.gameView.autoCompleteButton, 'disabled2', 'continue')
         elementsWithIds.forEach((item) => {
-          target.append(item.element)
-        })
+          if (item) { 
+             target.append(item.element);
+          }
+         });
         if (this.gameView.audio) {
           this.gameView.audio.play('Bibip.mp3')
         }
@@ -835,19 +847,25 @@ export class Game {
   }
 
   changeElBackground = (target: Element[], image: string) => {
-    const applyBackgroundChange = (element: Element) => {
-       if (element instanceof HTMLElement && !element.classList.contains('temp-el')) {
-         if (image) {
-           element.style.backgroundImage = image;
-         } else {
-           element.style.backgroundImage = image;
-           element.style.backgroundColor = `rgb(114,102,90)`;
-         }
-         // Apply the change to all children of the current element
-         Array.from(element.children).forEach(applyBackgroundChange);
-       }
-    };
-   
-    target.forEach(applyBackgroundChange);
-   }
+    target.forEach((child) => {
+        if (child instanceof HTMLElement && !child.classList.contains('temp-el')) {
+          if (image) {
+            child.style.backgroundImage = image;
+            const singleChild = child.firstElementChild;
+            if (singleChild instanceof HTMLElement) {
+                
+                singleChild.style.backgroundImage = image;
+            }
+        } else {
+          child.style.backgroundImage = image;
+          child.style.backgroundColor = `rgb(114,102,90)`;
+          const singleChild = child.firstElementChild;
+          if (singleChild instanceof HTMLElement) {
+             singleChild.style.backgroundImage = image;
+             singleChild.style.backgroundColor = `rgb(114,102,90)`;
+        }
+      }
+    }
+    });
+}
 }
