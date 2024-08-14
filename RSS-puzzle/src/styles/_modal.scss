@@ -17,7 +17,7 @@
   width: 750px;
   min-height: 300px;
   overflow: auto;
-  background-image: url('background.jpg');
+  background-image: url('/background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   border: 2px solid $modalBorderPink;
@@ -40,7 +40,7 @@
   width: 750px;
   min-height: 700px;
   overflow: auto;
-  background-image: url('background.jpg');
+  background-image: url('/background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   border: 2px solid $modalBorderPink;
@@ -80,7 +80,7 @@
 }
 
 .line-icon1 {
-  background-image: url('cat12a.png');
+  background-image: url('/cat12a.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -90,7 +90,7 @@
 }
 
 .line-icon2 {
-  background-image: url('catIdk.png');
+  background-image: url('/catIdk.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -131,7 +131,7 @@
   width: 400px;
   min-height: 300px;
   overflow: auto;
-  background-image: url('background.jpg');
+  background-image: url('/background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   border: 2px solid $modalBorderBlue;
