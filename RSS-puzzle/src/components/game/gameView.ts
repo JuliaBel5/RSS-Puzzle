@@ -1,6 +1,6 @@
 import { state } from '../../main'
 import { createElement } from '../../utils/createElement'
-import { Music } from '../../utils/music'
+import { Music } from '../../utils/Music'
 import { Header } from '../header'
 type HandlerFunction = () => void
 export class GameView {

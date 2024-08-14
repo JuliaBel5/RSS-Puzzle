@@ -13,7 +13,7 @@ import { changeOptionColor } from '../header'
 import { LevelDataResult, transformLevelData } from '../levels'
 import { Stats } from '../stats'
 import { UserData, UserStats } from './types'
-import { Music } from '../../utils/music'
+import { Music } from '../../utils/Music'
 import { GameView } from './gameView'
 
 export class Game {
